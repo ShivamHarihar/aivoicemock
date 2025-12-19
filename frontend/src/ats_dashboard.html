@@ -1,0 +1,553 @@
+{% extends "base.html" %}
+
+{% block title %}ATS Analysis Dashboard | SAMPRO AI{% endblock %}
+
+{% block content %}
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<section class="section ats-section">
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header fade-up">
+            <h1>ATS Analysis Dashboard</h1>
+            <p class="subtitle">Comprehensive resume analysis with AI-powered optimization</p>
+        </div>
+
+        <!-- Top Stats Row -->
+        <div class="top-stats-grid fade-up">
+            <div class="stat-card glass-panel">
+                <div class="stat-header">
+                    <span class="stat-icon">📊</span>
+                    <span class="stat-label">Overall Score</span>
+                </div>
+                <div class="stat-value" id="overall-score-stat">0</div>
+                <div class="stat-trend positive" id="score-trend">
+                    <span class="trend-icon">↗</span>
+                    <span class="trend-text">Excellent</span>
+                </div>
+            </div>
+
+            <div class="stat-card glass-panel">
+                <div class="stat-header">
+                    <span class="stat-icon">🎯</span>
+                    <span class="stat-label">Match Rate</span>
+                </div>
+                <div class="stat-value" id="match-rate-stat">0%</div>
+                <div class="stat-trend positive">
+                    <span class="trend-icon">↗</span>
+                    <span class="trend-text">Above Average</span>
+                </div>
+            </div>
+
+            <div class="stat-card glass-panel">
+                <div class="stat-header">
+                    <span class="stat-icon">⚡</span>
+                    <span class="stat-label">Optimization Level</span>
+                </div>
+                <div class="stat-value" id="optimization-stat">High</div>
+                <div class="stat-trend neutral">
+                    <span class="trend-icon">→</span>
+                    <span class="trend-text">Stable</span>
+                </div>
+            </div>
+
+            <div class="stat-card glass-panel">
+                <div class="stat-header">
+                    <span class="stat-icon">🏆</span>
+                    <span class="stat-label">Ranking</span>
+                </div>
+                <div class="stat-value" id="ranking-stat">Top 10%</div>
+                <div class="stat-trend positive">
+                    <span class="trend-icon">↗</span>
+                    <span class="trend-text">Improving</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-main-grid">
+            <!-- All cards in 3-column grid -->
+            <!-- Score Circle with Enhanced Design -->
+            <div class="score-card glass-panel fade-up">
+                <h3 class="card-title">ATS Compatibility Score</h3>
+                <div class="score-circle-container">
+                    <div class="score-circle-wrapper">
+                        <svg viewBox="0 0 200 200" class="circular-chart">
+                            <defs>
+                                <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="circle-bg" cx="100" cy="100" r="85" />
+                            <circle id="ats-score-circle" class="circle-progress" cx="100" cy="100" r="85"
+                                stroke="url(#scoreGradient)" stroke-dasharray="0, 534.07" />
+                            <text x="100" y="95" class="percentage-text" id="ats-score-display">0</text>
+                            <text x="100" y="120" class="score-label-text">ATS Score</text>
+                        </svg>
+                    </div>
+                    <div class="score-details">
+                        <h4 id="score-title">Analyzing Resume...</h4>
+                        <p id="score-description">Your resume is being evaluated</p>
+                        <div class="score-tier" id="score-tier">
+                            <span class="tier-badge">Calculating...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skills Distribution Chart -->
+            <div class="chart-card glass-panel fade-up">
+                <div class="card-header">
+                    <h3 class="card-title">Skills Distribution</h3>
+                    <div class="card-actions">
+                        <button class="btn-icon" title="Refresh">🔄</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="skillsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Resume Strength Funnel -->
+            <div class="chart-card glass-panel fade-up">
+                <div class="card-header">
+                    <h3 class="card-title">Resume Optimization Funnel</h3>
+                </div>
+                <div class="funnel-container">
+                    <div class="funnel-stage"
+                        style="width: 100%; background: linear-gradient(135deg, #10b981, #059669);">
+                        <span class="funnel-label">Content Quality</span>
+                        <span class="funnel-value" id="funnel-content">95%</span>
+                    </div>
+                    <div class="funnel-stage"
+                        style="width: 85%; background: linear-gradient(135deg, #3b82f6, #2563eb);">
+                        <span class="funnel-label">Keyword Match</span>
+                        <span class="funnel-value" id="funnel-keywords">85%</span>
+                    </div>
+                    <div class="funnel-stage"
+                        style="width: 70%; background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                        <span class="funnel-label">Format Quality</span>
+                        <span class="funnel-value" id="funnel-format">70%</span>
+                    </div>
+                    <div class="funnel-stage"
+                        style="width: 60%; background: linear-gradient(135deg, #ec4899, #db2777);">
+                        <span class="funnel-label">ATS Compatibility</span>
+                        <span class="funnel-value" id="funnel-ats">60%</span>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Metrics Performance Chart -->
+            <div class="chart-card glass-panel fade-up">
+                <div class="card-header">
+                    <h3 class="card-title">Performance Metrics</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="metricsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Score Breakdown -->
+            <div class="breakdown-card glass-panel fade-up">
+                <h3 class="card-title">Score Breakdown</h3>
+                <div class="breakdown-list">
+                    <div class="breakdown-item">
+                        <div class="breakdown-header">
+                            <span class="breakdown-icon">📝</span>
+                            <span class="breakdown-label">Keywords Match</span>
+                            <span class="breakdown-score" id="keywords-score">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="keywords-bar"
+                                style="width: 0%; background: linear-gradient(90deg, #10b981, #059669);"></div>
+                        </div>
+                    </div>
+
+                    <div class="breakdown-item">
+                        <div class="breakdown-header">
+                            <span class="breakdown-icon">🎯</span>
+                            <span class="breakdown-label">Skills Alignment</span>
+                            <span class="breakdown-score" id="skills-score">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="skills-bar"
+                                style="width: 0%; background: linear-gradient(90deg, #3b82f6, #2563eb);"></div>
+                        </div>
+                    </div>
+
+                    <div class="breakdown-item">
+                        <div class="breakdown-header">
+                            <span class="breakdown-icon">📄</span>
+                            <span class="breakdown-label">Format Quality</span>
+                            <span class="breakdown-score" id="format-score">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="format-bar"
+                                style="width: 0%; background: linear-gradient(90deg, #8b5cf6, #7c3aed);"></div>
+                        </div>
+                    </div>
+
+                    <div class="breakdown-item">
+                        <div class="breakdown-header">
+                            <span class="breakdown-icon">💼</span>
+                            <span class="breakdown-label">Experience Impact</span>
+                            <span class="breakdown-score" id="impact-score">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="impact-bar"
+                                style="width: 0%; background: linear-gradient(90deg, #ec4899, #db2777);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Improvement Priority Chart -->
+            <div class="chart-card glass-panel fade-up">
+                <div class="card-header">
+                    <h3 class="card-title">Improvement Priority</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="priorityChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analysis Details Section -->
+    <div class="analysis-section">
+        <div class="analysis-grid">
+            <!-- Strengths -->
+            <div class="analysis-card glass-panel fade-up">
+                <div class="analysis-header">
+                    <div class="analysis-icon success">✅</div>
+                    <h3>Strengths</h3>
+                    <span class="analysis-count" id="strengths-count">0</span>
+                </div>
+                <ul id="strengths-list" class="analysis-list">
+                    <li>Loading analysis...</li>
+                </ul>
+            </div>
+
+            <!-- Improvements -->
+            <div class="analysis-card glass-panel fade-up">
+                <div class="analysis-header">
+                    <div class="analysis-icon warning">⚠️</div>
+                    <h3>Areas for Improvement</h3>
+                    <span class="analysis-count" id="improvements-count">0</span>
+                </div>
+                <ul id="improvements-list" class="analysis-list">
+                    <li>Loading analysis...</li>
+                </ul>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="analysis-card glass-panel fade-up">
+                <div class="analysis-header">
+                    <div class="analysis-icon info">💡</div>
+                    <h3>AI Recommendations</h3>
+                    <span class="analysis-count" id="recommendations-count">0</span>
+                </div>
+                <ul id="recommendations-list" class="analysis-list">
+                    <li>Loading recommendations...</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Recreation CTA -->
+    <div class="cta-card glass-panel fade-up">
+        <div class="cta-content">
+            <div class="cta-icon">🤖</div>
+            <div class="cta-text">
+                <h2>AI-Powered Resume Recreation</h2>
+                <p>Let our AI automatically optimize your resume for maximum ATS compatibility. We'll enhance
+                    keywords, improve formatting, and boost your score.</p>
+            </div>
+            <button class="btn btn-primary btn-lg" id="recreate-btn" onclick="recreateResumeWithAI()">
+                <span>✨ Recreate Resume with AI</span>
+                <div class="btn-glow"></div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Recreated Resume Display (Hidden Initially) -->
+    <div id="recreated-section" class="recreated-section" style="display: none;">
+        <div class="glass-panel fade-up">
+            <h2>✨ Your Optimized Resume</h2>
+            <div class="comparison-stats">
+                <div class="stat-comparison">
+                    <span class="label">Previous Score</span>
+                    <span class="value old-score" id="old-score">0</span>
+                </div>
+                <div class="stat-arrow">→</div>
+                <div class="stat-comparison">
+                    <span class="label">New Score</span>
+                    <span class="value new-score" id="new-score">0</span>
+                </div>
+                <div class="stat-improvement">
+                    <span class="improvement-badge" id="improvement-badge">+0%</span>
+                </div>
+            </div>
+
+            <div class="recreated-content">
+                <div class="format-tabs">
+                    <button class="format-tab active" onclick="showFormat('preview')">Preview</button>
+                    <button class="format-tab" onclick="showFormat('markdown')">Markdown</button>
+                </div>
+
+                <div id="preview-content" class="format-content active">
+                    <div id="resume-preview" class="resume-preview"></div>
+                </div>
+
+                <div id="markdown-content" class="format-content">
+                    <pre id="resume-markdown" class="resume-markdown"></pre>
+                </div>
+            </div>
+
+            <!-- Template Selector -->
+            <div class="resume-template-selector">
+                <h3>Choose Your Resume Style</h3>
+                <div class="template-grid-container">
+
+                    <!-- New Templates -->
+                    <label class="template-card-wrapper">
+                        <input type="radio" name="resume-template" value="template-1" checked>
+                        <div class="template-card">
+                            <div class="template-icon">🌑</div>
+                            <div class="template-info">
+                                <div class="template-name">Modern</div>
+                                <div class="template-desc">Professional dark sidebar design</div>
+                            </div>
+                        </div>
+                    </label>
+
+                    <label class="template-card-wrapper">
+                        <input type="radio" name="resume-template" value="template-2">
+                        <div class="template-card">
+                            <div class="template-icon">🌗</div>
+                            <div class="template-info">
+                                <div class="template-name">Classic</div>
+                                <div class="template-desc">Two-column split with header band</div>
+                            </div>
+                        </div>
+                    </label>
+
+                    <label class="template-card-wrapper">
+                        <input type="radio" name="resume-template" value="template-3">
+                        <div class="template-card">
+                            <div class="template-icon">⚡</div>
+                            <div class="template-info">
+                                <div class="template-name">Professional</div>
+                                <div class="template-desc">Single column with key achievements</div>
+                            </div>
+                        </div>
+                    </label>
+
+                    <label class="template-card-wrapper">
+                        <input type="radio" name="resume-template" value="template-4">
+                        <div class="template-card">
+                            <div class="template-icon">🌲</div>
+                            <div class="template-info">
+                                <div class="template-name">Creative</div>
+                                <div class="template-desc">Heavy left sidebar with timeline</div>
+                            </div>
+                        </div>
+                    </label>
+
+                    <label class="template-card-wrapper">
+                        <input type="radio" name="resume-template" value="template-5">
+                        <div class="template-card">
+                            <div class="template-icon">🟦</div>
+                            <div class="template-info">
+                                <div class="template-name">Minimal</div>
+                                <div class="template-desc">Header band with boxed right column</div>
+                            </div>
+                        </div>
+                    </label>
+
+                </div>
+            </div>
+
+            <style>
+                /* Resume Preview Container "Paper" Look */
+                .resume-preview {
+                    width: 100%;
+                    height: 600px;
+                    /* Fixed height for scrolling */
+                    overflow-y: auto;
+                    background-color: #525659;
+                    /* Standard PDF viewer grey */
+                    padding: 40px;
+                    display: flex;
+                    justify-content: center;
+                    border-radius: 8px;
+                    margin-bottom: 20px;
+                    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+                }
+
+                /* Scrollbar styling for the preview */
+                .resume-preview::-webkit-scrollbar {
+                    width: 12px;
+                }
+
+                .resume-preview::-webkit-scrollbar-track {
+                    background: #2d3748;
+                }
+
+                .resume-preview::-webkit-scrollbar-thumb {
+                    background-color: #4a5568;
+                    border-radius: 6px;
+                    border: 3px solid #2d3748;
+                }
+
+                .resume-template-selector {
+                    margin: 2rem 0;
+                    padding: 1.5rem;
+                    background: rgba(255, 255, 255, 0.03);
+                    border-radius: 12px;
+                    border: 1px solid rgba(255, 255, 255, 0.05);
+                }
+
+                .resume-template-selector h3 {
+                    margin-bottom: 1.5rem;
+                    font-size: 1.2rem;
+                    color: #e5e7eb;
+                    font-weight: 600;
+                }
+
+                .template-grid-container {
+                    display: grid;
+                    grid-template-columns: repeat(5, 1fr);
+                    gap: 1rem;
+                }
+
+                @media (max-width: 1200px) {
+                    .template-grid-container {
+                        grid-template-columns: repeat(3, 1fr);
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .template-grid-container {
+                        grid-template-columns: repeat(2, 1fr);
+                    }
+                }
+
+                .template-card-wrapper {
+                    cursor: pointer;
+                    display: block;
+                    position: relative;
+                }
+
+                .template-card-wrapper input[type="radio"] {
+                    position: absolute;
+                    opacity: 0;
+                    pointer-events: none;
+                }
+
+                .template-card {
+                    height: 100%;
+                    min-height: 140px;
+                    padding: 1.25rem 1rem;
+                    text-align: center;
+                    border-radius: 10px;
+                    border: 2px solid rgba(255, 255, 255, 0.1);
+                    background: rgba(255, 255, 255, 0.03);
+                    transition: all 0.3s ease;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .template-card:hover {
+                    transform: translateY(-3px);
+                    border-color: rgba(99, 102, 241, 0.5);
+                    background: rgba(99, 102, 241, 0.1);
+                    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.15);
+                }
+
+                .template-card-wrapper input[type="radio"]:checked+.template-card {
+                    border-color: #6366f1;
+                    background: rgba(99, 102, 241, 0.2);
+                    box-shadow: 0 0 25px rgba(99, 102, 241, 0.3);
+                }
+
+                .template-icon {
+                    font-size: 2.5rem;
+                    margin-bottom: 0.75rem;
+                    line-height: 1;
+                }
+
+                .template-info {
+                    width: 100%;
+                }
+
+                .template-name {
+                    font-weight: 600;
+                    font-size: 1rem;
+                    margin-bottom: 0.4rem;
+                    color: #e5e7eb;
+                }
+
+                .template-desc {
+                    font-size: 0.75rem;
+                    color: #9ca3af;
+                    line-height: 1.3;
+                }
+            </style>
+
+            <!-- <div class="download-actions">
+                    <button class="btn btn-primary" onclick="downloadResume('markdown')">
+                        📥 Download Markdown
+                    </button>
+                    <button class="btn btn-outline" onclick="downloadResume('pdf')">
+                        📄 Download PDF
+                    </button>
+                    <button class="btn btn-outline" onclick="copyToClipboard()">
+                        📋 Copy to Clipboard
+                    </button>
+                </div> -->
+            <div class="download-actions" style="text-align: center; margin-top: 2rem;">
+                <div style="display: inline-block; position: relative;">
+                    <button class="btn btn-primary" id="download-dropdown-btn" onclick="toggleDownloadDropdown(event)"
+                        style="min-width: 200px;">
+                        📄 Download Resume ▼
+                    </button>
+                    <div id="download-dropdown"
+                        style="display: none; position: absolute; left: 0; right: 0; background: #1f2937; border: 1px solid rgba(99,102,241,0.3); border-radius: 8px; margin-top: 8px; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+                        <button onclick="downloadResume('pdf'); hideDownloadDropdown();"
+                            style="width: 100%; padding: 14px 20px; background: transparent; color: #e5e7eb; border: none; text-align: left; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05);"
+                            onmouseover="this.style.background='rgba(99,102,241,0.2)'"
+                            onmouseout="this.style.background='transparent'">
+                            📄 Download as PDF
+                        </button>
+                        <button onclick="downloadResume('docx'); hideDownloadDropdown();"
+                            style="width: 100%; padding: 14px 20px; background: transparent; color: #e5e7eb; border: none; text-align: left; cursor: pointer;"
+                            onmouseover="this.style.background='rgba(99,102,241,0.2)'"
+                            onmouseout="this.style.background='transparent'">
+                            📝 Download as Word
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="back-action fade-up">
+        <a href="/resume_analysis" class="btn btn-outline">
+            ← Analyze Another Resume
+        </a>
+    </div>
+    </div>
+</section>
+
+<script src="/static/js/template_preview.js"></script>
+<script src="/static/js/ats_charts.js"></script>
+<script src="/static/js/ats_dashboard.js"></script>
+<script src="/static/js/dropdown_functions.js"></script>
+{% endblock %}

@@ -1,0 +1,49 @@
+/* User will add CSS manually */
+@media print {
+    @page {
+        margin: 0;
+        size: A4;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-size: 10.5pt;
+    }
+
+    .resume-container {
+        /* Single column layout for print, but keep header color */
+        display: block !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0; 
+    }
+
+    .resume-header {
+        background-color: #2c3e50 !important; /* Keep blue header */
+        padding: 20px 45px !important;
+        height: auto !important;
+    }
+
+    .header-content {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    .resume-photo {
+        display: none !important; /* Hide photo in print */
+    }
+
+    .main-content {
+        padding: 20px 45px !important;
+        width: 100% !important;
+    }
+
+    .section-languages, .section-projects {
+        padding: 0 45px !important;
+    }
+
+    .no-break {
+        break-inside: avoid;
+    }
+}

@@ -1,0 +1,95 @@
+/* Template 2: Two-column split with header band */
+/* Reference: Screenshot 104908.png */
+
+@import url('../css/base_styles.css');
+
+body.template-2 {
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+}
+
+.resume-container[data-template="template-2"] {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    grid-template-rows: auto 1fr;
+    /* A4 Dimensions */
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    background: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Header Band */
+.resume-container[data-template="template-2"] .resume-header {
+    grid-column: 1 / -1;
+    background-color: #000000;
+    color: #ffffff;
+    padding: 3rem;
+    text-align: center;
+}
+
+.resume-container[data-template="template-2"] .resume-header h1 {
+    font-size: 36px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+}
+
+.resume-container[data-template="template-2"] .resume-header p {
+    color: #ccc;
+    font-size: 14px;
+}
+
+/* Left Column (Main) */
+.resume-container[data-template="template-2"] .section-summary,
+.resume-container[data-template="template-2"] .section-experience,
+.resume-container[data-template="template-2"] .section-projects {
+    grid-column: 1;
+    padding: 2rem;
+    border-right: 1px solid #eee;
+}
+
+/* Right Column (Sidebar) */
+.resume-container[data-template="template-2"] .section-contact,
+.resume-container[data-template="template-2"] .section-education,
+.resume-container[data-template="template-2"] .section-skills,
+.resume-container[data-template="template-2"] .section-languages,
+.resume-container[data-template="template-2"] .section-certifications {
+    grid-column: 2;
+    padding: 2rem;
+    background-color: #fafafa;
+}
+
+/* Styling */
+.resume-container[data-template="template-2"] h2 {
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+    color: #000;
+    display: flex;
+    align-items: center;
+}
+
+.resume-container[data-template="template-2"] h2::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: #000;
+    margin-right: 10px;
+    border-radius: 50%;
+}
+
+.resume-container[data-template="template-2"] .right-column h2::before {
+    background: #555;
+}
+
+/* Timeline effect for experience */
+.resume-container[data-template="template-2"] .section-experience h3 {
+    position: relative;
+    padding-left: 15px;
+    border-left: 3px solid #000;
+    margin-left: 9px;
+}

@@ -1,0 +1,570 @@
+{% extends "base.html" %}
+
+{% block title %}Analyzing Resume | SAMPRO AI{% endblock %}
+
+{% block content %}
+<section class="section analysis-loading-section">
+    <div class="container">
+        <!-- Loading Header -->
+        <div class="loading-header fade-up">
+            <h1>Analyzing Your <span class="text-gradient">Resume</span></h1>
+            <p class="subtitle">Our AI is processing your resume to provide comprehensive insights</p>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="analysis-loading-grid">
+            <!-- Left Side: Loading Animation -->
+            <div class="loading-panel glass-panel fade-up">
+                <div class="loading-content">
+                    <!-- Animated Scanner -->
+                    <div class="scanner-container">
+                        <div class="scanner-icon">
+                            <svg width="120" height="120" viewBox="0 0 120 120" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="60" cy="60" r="55" stroke="url(#gradient1)" stroke-width="3"
+                                    stroke-dasharray="10 5" class="rotating-circle" />
+                                <circle cx="60" cy="60" r="45" stroke="url(#gradient2)" stroke-width="2"
+                                    stroke-dasharray="8 4" class="rotating-circle-reverse" />
+                                <circle cx="60" cy="60" r="35" stroke="url(#gradient3)" stroke-width="2"
+                                    stroke-dasharray="6 3" class="rotating-circle" />
+
+                                <!-- Document Icon -->
+                                <rect x="40" y="35" width="40" height="50" rx="3" fill="rgba(99, 102, 241, 0.2)"
+                                    stroke="#6366f1" stroke-width="2" />
+                                <line x1="48" y1="45" x2="72" y2="45" stroke="#6366f1" stroke-width="2"
+                                    stroke-linecap="round" />
+                                <line x1="48" y1="55" x2="72" y2="55" stroke="#6366f1" stroke-width="2"
+                                    stroke-linecap="round" />
+                                <line x1="48" y1="65" x2="65" y2="65" stroke="#6366f1" stroke-width="2"
+                                    stroke-linecap="round" />
+
+                                <!-- Scan Line -->
+                                <line x1="40" y1="60" x2="80" y2="60" stroke="#ec4899" stroke-width="2"
+                                    class="scan-line">
+                                    <animate attributeName="y1" values="35;85;35" dur="2s" repeatCount="indefinite" />
+                                    <animate attributeName="y2" values="35;85;35" dur="2s" repeatCount="indefinite" />
+                                </line>
+
+                                <defs>
+                                    <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+                                    </linearGradient>
+                                    <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#ec4899;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                                    </linearGradient>
+                                    <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Progress Steps -->
+                    <div class="progress-steps">
+                        <div class="step active" id="step-1">
+                            <div class="step-icon">✓</div>
+                            <div class="step-text">Parsing Resume</div>
+                        </div>
+                        <div class="step" id="step-2">
+                            <div class="step-icon">⟳</div>
+                            <div class="step-text">Analyzing Content</div>
+                        </div>
+                        <div class="step" id="step-3">
+                            <div class="step-icon">⟳</div>
+                            <div class="step-text">Calculating ATS Score</div>
+                        </div>
+                        <div class="step" id="step-4">
+                            <div class="step-icon">⟳</div>
+                            <div class="step-text">Generating Insights</div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <div class="progress-text" id="progress-text">0%</div>
+                    </div>
+
+                    <!-- Status Message -->
+                    <div class="status-message" id="status-message">
+                        Initializing AI analysis...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Resume Preview -->
+            <div class="preview-panel glass-panel fade-up">
+                <h3 class="preview-title">
+                    <span class="preview-icon">📄</span>
+                    Resume Preview
+                </h3>
+                <div class="resume-preview-container">
+                    <div class="resume-preview-content" id="resume-preview">
+                        <!-- PDF/Text preview will be loaded here -->
+                        <div class="preview-placeholder">
+                            <div class="placeholder-icon">📄</div>
+                            <p>Loading resume preview...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="preview-info">
+                    <span class="info-label">File:</span>
+                    <span class="info-value" id="file-name">resume.pdf</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .analysis-loading-section {
+        min-height: 100vh;
+        padding: 80px 20px 40px;
+        background: #f8f9fa;
+    }
+
+    .loading-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .loading-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: #2d3748;
+    }
+
+    .loading-header .subtitle {
+        font-size: 1.1rem;
+        color: #64748b;
+    }
+
+    .analysis-loading-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    @media (max-width: 968px) {
+        .analysis-loading-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .loading-panel,
+    .preview-panel {
+        padding: 40px;
+        border-radius: 20px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .loading-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+
+    /* Scanner Animation */
+    .scanner-container {
+        margin: 20px 0;
+    }
+
+    .rotating-circle {
+        transform-origin: center;
+        animation: rotate 3s linear infinite;
+    }
+
+    .rotating-circle-reverse {
+        transform-origin: center;
+        animation: rotate-reverse 4s linear infinite;
+    }
+
+    @keyframes rotate {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes rotate-reverse {
+        from {
+            transform: rotate(360deg);
+        }
+
+        to {
+            transform: rotate(0deg);
+        }
+    }
+
+    .scan-line {
+        filter: drop-shadow(0 0 8px #ec4899);
+    }
+
+    /* Progress Steps */
+    .progress-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .step {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px 20px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+        opacity: 0.6;
+    }
+
+    .step.active {
+        opacity: 1;
+        background: #eff6ff;
+        border-color: #3b82f6;
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+    }
+
+    .step.completed {
+        opacity: 0.9;
+        background: #f0fdf4;
+        border-color: #10b981;
+    }
+
+    .step-icon {
+        font-size: 1.5rem;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #dbeafe;
+        border-radius: 50%;
+        flex-shrink: 0;
+        color: #3b82f6;
+    }
+
+    .step.completed .step-icon {
+        background: #d1fae5;
+        color: #10b981;
+    }
+
+    .step-text {
+        font-size: 1rem;
+        color: #334155;
+        font-weight: 500;
+    }
+
+    /* Progress Bar */
+    .progress-bar-container {
+        width: 100%;
+        max-width: 400px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #e2e8f0;
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .progress-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #3b82f6, #06b6d4);
+        border-radius: 10px;
+        transition: width 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .progress-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes shimmer {
+        0% {
+            transform: translateX(-100%);
+        }
+
+        100% {
+            transform: translateX(100%);
+        }
+    }
+
+    .progress-text {
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #3b82f6;
+    }
+
+    /* Status Message */
+    .status-message {
+        text-align: center;
+        font-size: 1rem;
+        color: #64748b;
+        font-style: italic;
+        min-height: 24px;
+    }
+
+    /* Resume Preview */
+    .preview-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        font-size: 1.3rem;
+        color: #2d3748;
+    }
+
+    .preview-icon {
+        font-size: 1.5rem;
+    }
+
+    .resume-preview-container {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 0;
+        min-height: 500px;
+        max-height: 600px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+
+    .resume-preview-content {
+        color: #334155;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        height: 100%;
+        padding: 20px;
+    }
+
+    .resume-preview-content iframe {
+        display: block;
+        padding: 0;
+    }
+
+    .preview-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 400px;
+        color: #94a3b8;
+    }
+
+    .placeholder-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        opacity: 0.5;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 0.5;
+        }
+
+        50% {
+            opacity: 0.8;
+        }
+    }
+
+    .preview-info {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        gap: 10px;
+        font-size: 0.9rem;
+    }
+
+    .info-label {
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .info-value {
+        color: #2d3748;
+        font-weight: 600;
+    }
+
+    /* Scrollbar Styling */
+    .resume-preview-container::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .resume-preview-container::-webkit-scrollbar-track {
+        background: #e2e8f0;
+        border-radius: 10px;
+    }
+
+    .resume-preview-container::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+    }
+
+    .resume-preview-container::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+</style>
+
+<script>
+    // Get analysis data from sessionStorage
+    const analysisData = JSON.parse(sessionStorage.getItem('pending_analysis_data') || '{}');
+    const resumeText = sessionStorage.getItem('pending_resume_text') || '';
+    const fileName = sessionStorage.getItem('pending_file_name') || 'resume.pdf';
+    const fileUrl = sessionStorage.getItem('pending_file_url') || '';
+    const fileType = sessionStorage.getItem('pending_file_type') || 'txt';
+
+    // Display file name
+    document.getElementById('file-name').textContent = fileName;
+
+    // Display resume preview
+    const previewElement = document.getElementById('resume-preview');
+
+    if (fileUrl && fileType === 'pdf') {
+        // Display PDF using iframe
+        previewElement.innerHTML = `
+            <iframe 
+                src="${fileUrl}" 
+                style="width: 100%; height: 100%; min-height: 500px; border: none; border-radius: 8px;"
+                type="application/pdf"
+            >
+                <p>Your browser does not support PDFs. 
+                   <a href="${fileUrl}" target="_blank">Download the PDF</a> to view it.
+                </p>
+            </iframe>
+        `;
+    } else if (resumeText) {
+        // Fallback to text preview for non-PDF files
+        const previewText = resumeText.substring(0, 2000) + (resumeText.length > 2000 ? '\n\n...' : '');
+        previewElement.innerHTML = `<pre style="margin: 0; font-family: 'Courier New', monospace; font-size: 0.85rem;">${escapeHtml(previewText)}</pre>`;
+    }
+
+    // Helper function to escape HTML
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Animation steps
+    const steps = [
+        { id: 'step-1', message: 'Parsing resume structure...', duration: 800 },
+        { id: 'step-2', message: 'Analyzing content quality...', duration: 1200 },
+        { id: 'step-3', message: 'Calculating ATS compatibility score...', duration: 1000 },
+        { id: 'step-4', message: 'Generating AI-powered insights...', duration: 1000 }
+    ];
+
+    let currentStep = 0;
+    let progress = 0;
+
+    // Update progress
+    function updateProgress(percentage, message) {
+        document.getElementById('progress-fill').style.width = percentage + '%';
+        document.getElementById('progress-text').textContent = Math.round(percentage) + '%';
+        if (message) {
+            document.getElementById('status-message').textContent = message;
+        }
+    }
+
+    // Activate step
+    function activateStep(stepIndex) {
+        // Mark previous steps as completed
+        for (let i = 0; i < stepIndex; i++) {
+            const stepEl = document.getElementById(steps[i].id);
+            stepEl.classList.remove('active');
+            stepEl.classList.add('completed');
+            stepEl.querySelector('.step-icon').textContent = '✓';
+        }
+
+        // Activate current step
+        if (stepIndex < steps.length) {
+            const stepEl = document.getElementById(steps[stepIndex].id);
+            stepEl.classList.add('active');
+            stepEl.querySelector('.step-icon').textContent = '⟳';
+        }
+    }
+
+    // Run animation sequence
+    async function runAnalysisAnimation() {
+        const totalDuration = steps.reduce((sum, step) => sum + step.duration, 0);
+        let elapsed = 0;
+
+        for (let i = 0; i < steps.length; i++) {
+            activateStep(i);
+            updateProgress((elapsed / totalDuration) * 100, steps[i].message);
+
+            // Smooth progress during this step
+            const stepProgress = steps[i].duration / 100;
+            for (let j = 0; j < 100; j++) {
+                await new Promise(resolve => setTimeout(resolve, stepProgress));
+                elapsed += stepProgress;
+                updateProgress((elapsed / totalDuration) * 100);
+            }
+        }
+
+        // Mark all as completed
+        activateStep(steps.length);
+        updateProgress(100, 'Analysis complete! Redirecting...');
+
+        // Wait a moment then redirect
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Transfer data to final storage
+        sessionStorage.setItem('ats_analysis_data', JSON.stringify(analysisData));
+        sessionStorage.setItem('resume_text', resumeText);
+        sessionStorage.setItem('original_filename', analysisData.original_filename || 'resume');
+
+        // Clean up temporary data
+        sessionStorage.removeItem('pending_analysis_data');
+        sessionStorage.removeItem('pending_resume_text');
+        sessionStorage.removeItem('pending_file_name');
+
+        // Redirect to dashboard
+        window.location.href = '/ats_dashboard';
+    }
+
+    // Start animation when page loads
+    window.addEventListener('load', () => {
+        // Small delay before starting
+        setTimeout(runAnalysisAnimation, 500);
+    });
+</script>
+
+{% endblock %}

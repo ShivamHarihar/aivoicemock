@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #fff;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+        }
+
+        .gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .feature-desc {
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        .comparison {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px;
+            margin-top: 40px;
+        }
+
+        .comparison h2 {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .comparison-col h3 {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .comparison-col ul {
+            list-style: none;
+        }
+
+        .comparison-col li {
+            padding: 10px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #94a3b8;
+        }
+
+        .comparison-col li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .before li::before {
+            content: '✗';
+            color: #ef4444;
+        }
+
+        .cta {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🎉 New <span class="gradient">Dynamic Dashboard</span> Implemented!</h1>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">Real-Time Metrics</div>
+                <div class="feature-desc">
+                    Displays actual performance data from your interview including confidence levels, speaking pace, and
+                    question statistics.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <div class="feature-title">Animated Score Circle</div>
+                <div class="feature-desc">
+                    Beautiful SVG circular progress indicator that animates to show your overall score out of 100.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <div class="feature-title">Performance Trend</div>
+                <div class="feature-desc">
+                    Interactive chart showing how your performance evolved throughout the interview.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">✨</div>
+                <div class="feature-title">Smart Analysis</div>
+                <div class="feature-desc">
+                    Automatically identifies your strengths and provides personalized improvement recommendations.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <div class="feature-title">Premium Design</div>
+                <div class="feature-desc">
+                    Glassmorphism UI with smooth animations, gradient accents, and responsive layouts.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">Dynamic Data</div>
+                <div class="feature-desc">
+                    No more static scores! Every metric is calculated from your actual interview performance.
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison">
+            <h2>Before vs After</h2>
+            <div class="comparison-grid">
+                <div class="comparison-col before">
+                    <h3 style="color: #ef4444;">❌ Before (Static)</h3>
+                    <ul>
+                        <li>Fixed score of 85</li>
+                        <li>Generic strengths list</li>
+                        <li>Static improvements</li>
+                        <li>No performance metrics</li>
+                        <li>No visual analytics</li>
+                        <li>Same for every interview</li>
+                        <li>No loading states</li>
+                        <li>Basic design</li>
+                    </ul>
+                </div>
+                <div class="comparison-col after">
+                    <h3 style="color: #10b981;">✅ After (Dynamic)</h3>
+                    <ul>
+                        <li>Real calculated score (0-100)</li>
+                        <li>Auto-generated strengths</li>
+                        <li>Personalized recommendations</li>
+                        <li>4 live performance metrics</li>
+                        <li>Interactive charts & graphs</li>
+                        <li>Unique for each session</li>
+                        <li>Professional loading UI</li>
+                        <li>Premium glassmorphism design</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta">
+            <a href="http://localhost:5000/dashboard" class="btn">Try It Now - Start an Interview</a>
+        </div>
+
+        <div
+            style="margin-top: 40px; padding: 30px; background: rgba(59, 130, 246, 0.1); border-left: 4px solid #3b82f6; border-radius: 8px;">
+            <h3 style="margin-bottom: 15px;">📝 How to Test:</h3>
+            <ol style="color: #94a3b8; line-height: 2; padding-left: 20px;">
+                <li>Go to <strong style="color: #fff;">Dashboard</strong> and start a new interview</li>
+                <li>Answer a few questions (the AI will analyze your responses)</li>
+                <li>Wait for the interview to complete (or it auto-completes after 2 minutes)</li>
+                <li>You'll be redirected to the <strong style="color: #fff;">Results Dashboard</strong></li>
+                <li>See your real performance data with beautiful visualizations!</li>
+            </ol>
+        </div>
+
+        <div
+            style="margin-top: 30px; padding: 20px; background: rgba(16, 185, 129, 0.1); border-left: 4px solid #10b981; border-radius: 8px;">
+            <h3 style="margin-bottom: 10px; color: #10b981;">✅ Implementation Complete</h3>
+            <p style="color: #94a3b8;">
+                The dashboard now fetches real interview data from the backend API and displays comprehensive
+                performance analytics.
+                All metrics are calculated based on your actual interview responses, confidence levels, speaking pace,
+                and AI evaluations.
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>

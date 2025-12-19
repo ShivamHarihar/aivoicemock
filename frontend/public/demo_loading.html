@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Loading Demo | SAMPRO AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .loading-header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .loading-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #e5e7eb;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .loading-header .subtitle {
+            font-size: 1.1rem;
+            color: #9ca3af;
+        }
+
+        .analysis-loading-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @media (max-width: 968px) {
+            .analysis-loading-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .glass-panel {
+            padding: 40px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .loading-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        /* Scanner Animation */
+        .scanner-container {
+            margin: 20px 0;
+        }
+
+        .rotating-circle {
+            transform-origin: center;
+            animation: rotate 3s linear infinite;
+        }
+
+        .rotating-circle-reverse {
+            transform-origin: center;
+            animation: rotate-reverse 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes rotate-reverse {
+            from {
+                transform: rotate(360deg);
+            }
+
+            to {
+                transform: rotate(0deg);
+            }
+        }
+
+        .scan-line {
+            filter: drop-shadow(0 0 8px #ec4899);
+        }
+
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            opacity: 0.5;
+        }
+
+        .step.active {
+            opacity: 1;
+            background: rgba(99, 102, 241, 0.1);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .step.completed {
+            opacity: 0.8;
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .step-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .step.completed .step-icon {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .step-text {
+            font-size: 1rem;
+            color: #e5e7eb;
+            font-weight: 500;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #6366f1, #ec4899);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #6366f1;
+        }
+
+        /* Status Message */
+        .status-message {
+            text-align: center;
+            font-size: 1rem;
+            color: #9ca3af;
+            font-style: italic;
+            min-height: 24px;
+        }
+
+        /* Resume Preview */
+        .preview-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            color: #e5e7eb;
+        }
+
+        .preview-icon {
+            font-size: 1.5rem;
+        }
+
+        .resume-preview-container {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 500px;
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .resume-preview-content {
+            color: #e5e7eb;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .preview-info {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .info-label {
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #e5e7eb;
+            font-weight: 600;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scrollbar Styling */
+        .resume-preview-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .resume-preview-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .resume-preview-container::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.5);
+            border-radius: 10px;
+        }
+
+        .resume-preview-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.7);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Loading Header -->
+        <div class="loading-header">
+            <h1>Analyzing Your <span class="text-gradient">Resume</span></h1>
+            <p class="subtitle">Our AI is processing your resume to provide comprehensive insights</p>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="analysis-loading-grid">
+            <!-- Left Side: Loading Animation -->
+            <div class="glass-panel">
+                <div class="loading-content">
+                    <!-- Animated Scanner -->
+                    <div class="scanner-container">
+                        <div class="scanner-icon">
+                            <svg width="120" height="120" viewBox="0 0 120 120" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="60" cy="60" r="55" stroke="url(#gradient1)" stroke-width="3"
+                                    stroke-dasharray="10 5" class="rotating-circle" />
+                                <circle cx="60" cy="60" r="45" stroke="url(#gradient2)" stroke-width="2"
+                                    stroke-dasharray="8 4" class="rotating-circle-reverse" />
+                                <circle cx="60" cy="60" r="35" stroke="url(#gradient3)" stroke-width="2"
+                                    stroke-dasharray="6 3" class="rotating-circle" />
+
+                                <!-- Document Icon -->
+                                <rect x="40" y="35" width="40" height="50" rx="3" fill="rgba(99, 102, 241, 0.2)"
+                                    stroke="#6366f1" stroke-width="2" />
+                                <line x1="48" y1="45" x2="72" y2="45" stroke="#6366f1" stroke-width="2"
+                                    stroke-linecap="round" />
+                                <line x1="48" y1="55" x2="72" y2="55" stroke="#6366f1" stroke-width="2"
+                                    stroke-linecap="round" />
+                                <line x1="48" y1="65" x2="65" y2="65" stroke="#6366f1" stroke-width="2"
+                                    stroke-linecap="round" />
+
+                                <!-- Scan Line -->
+                                <line x1="40" y1="60" x2="80" y2="60" stroke="#ec4899" stroke-width="2"
+                                    class="scan-line">
+                                    <animate attributeName="y1" values="35;85;35" dur="2s" repeatCount="indefinite" />
+                                    <animate attributeName="y2" values="35;85;35" dur="2s" repeatCount="indefinite" />
+                                </line>
+
+                                <defs>
+                                    <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+                                    </linearGradient>
+                                    <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#ec4899;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                                    </linearGradient>
+                                    <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Progress Steps -->
+                    <div class="progress-steps">
+                        <div class="step active" id="step-1">
+                            <div class="step-icon">✓</div>
+                            <div class="step-text">Parsing Resume</div>
+                        </div>
+                        <div class="step" id="step-2">
+                            <div class="step-icon">⟳</div>
+                            <div class="step-text">Analyzing Content</div>
+                        </div>
+                        <div class="step" id="step-3">
+                            <div class="step-icon">⟳</div>
+                            <div class="step-text">Calculating ATS Score</div>
+                        </div>
+                        <div class="step" id="step-4">
+                            <div class="step-icon">⟳</div>
+                            <div class="step-text">Generating Insights</div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <div class="progress-text" id="progress-text">0%</div>
+                    </div>
+
+                    <!-- Status Message -->
+                    <div class="status-message" id="status-message">
+                        Initializing AI analysis...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Resume Preview -->
+            <div class="glass-panel">
+                <h3 class="preview-title">
+                    <span class="preview-icon">📄</span>
+                    Resume Preview
+                </h3>
+                <div class="resume-preview-container">
+                    <div class="resume-preview-content" id="resume-preview">
+                        <pre style="margin: 0; font-family: 'Courier New', monospace; font-size: 0.85rem;">JOHN DOE
+Senior Software Engineer
+
+CONTACT
+Email: john.doe@email.com
+Phone: (555) 123-4567
+LinkedIn: linkedin.com/in/johndoe
+Location: San Francisco, CA
+
+PROFESSIONAL SUMMARY
+Results-driven Senior Software Engineer with 8+ years of experience in full-stack development, 
+cloud architecture, and team leadership. Proven track record of delivering scalable solutions 
+and improving system performance by 40%.
+
+EXPERIENCE
+
+Senior Software Engineer | Tech Corp | 2020 - Present
+• Led development of microservices architecture serving 10M+ users
+• Improved API response time by 60% through optimization
+• Mentored team of 5 junior developers
+• Technologies: Python, React, AWS, Docker, Kubernetes
+
+Software Engineer | StartupXYZ | 2017 - 2020
+• Built real-time data processing pipeline handling 1TB+ daily
+• Reduced infrastructure costs by 35% through cloud optimization
+• Implemented CI/CD pipeline reducing deployment time by 70%
+
+EDUCATION
+Bachelor of Science in Computer Science
+University of California, Berkeley | 2013 - 2017
+
+SKILLS
+Languages: Python, JavaScript, TypeScript, Java, Go
+Frameworks: React, Node.js, Django, Flask
+Cloud: AWS, Google Cloud, Azure
+DevOps: Docker, Kubernetes, Jenkins, GitLab CI
+Databases: PostgreSQL, MongoDB, Redis</pre>
+                    </div>
+                </div>
+                <div class="preview-info">
+                    <span class="info-label">File:</span>
+                    <span class="info-value" id="file-name">john_doe_resume.pdf</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Animation steps
+        const steps = [
+            { id: 'step-1', message: 'Parsing resume structure...', duration: 1000 },
+            { id: 'step-2', message: 'Analyzing content quality...', duration: 1500 },
+            { id: 'step-3', message: 'Calculating ATS compatibility score...', duration: 1200 },
+            { id: 'step-4', message: 'Generating AI-powered insights...', duration: 1300 }
+        ];
+
+        // Update progress
+        function updateProgress(percentage, message) {
+            document.getElementById('progress-fill').style.width = percentage + '%';
+            document.getElementById('progress-text').textContent = Math.round(percentage) + '%';
+            if (message) {
+                document.getElementById('status-message').textContent = message;
+            }
+        }
+
+        // Activate step
+        function activateStep(stepIndex) {
+            // Mark previous steps as completed
+            for (let i = 0; i < stepIndex; i++) {
+                const stepEl = document.getElementById(steps[i].id);
+                stepEl.classList.remove('active');
+                stepEl.classList.add('completed');
+                stepEl.querySelector('.step-icon').textContent = '✓';
+            }
+
+            // Activate current step
+            if (stepIndex < steps.length) {
+                const stepEl = document.getElementById(steps[stepIndex].id);
+                stepEl.classList.add('active');
+                stepEl.querySelector('.step-icon').textContent = '⟳';
+            }
+        }
+
+        // Run animation sequence
+        async function runAnalysisAnimation() {
+            const totalDuration = steps.reduce((sum, step) => sum + step.duration, 0);
+            let elapsed = 0;
+
+            for (let i = 0; i < steps.length; i++) {
+                activateStep(i);
+                updateProgress((elapsed / totalDuration) * 100, steps[i].message);
+
+                // Smooth progress during this step
+                const stepProgress = steps[i].duration / 100;
+                for (let j = 0; j < 100; j++) {
+                    await new Promise(resolve => setTimeout(resolve, stepProgress));
+                    elapsed += stepProgress;
+                    updateProgress((elapsed / totalDuration) * 100);
+                }
+            }
+
+            // Mark all as completed
+            activateStep(steps.length);
+            updateProgress(100, 'Analysis complete! ✨');
+        }
+
+        // Start animation when page loads
+        window.addEventListener('load', () => {
+            setTimeout(runAnalysisAnimation, 500);
+        });
+    </script>
+</body>
+
+</html>

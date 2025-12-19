@@ -1,0 +1,173 @@
+/* Template 10: John Smith (Classic, Blue Header, Simple Layout) */
+/* Reference: image_af8638.png */
+
+@import url('../css/base_styles.css');
+
+body.template-15 {
+    font-family: 'Times New Roman', Times, serif;
+    color: #333;
+    background: #f4f4f4;
+    font-size: 12pt;
+    line-height: 1.4;
+}
+
+.resume-container[data-template="template-15"] {
+    display: block;
+    /* A4 Dimensions */
+    width: 210mm;
+    min-height: 297mm;
+    margin: 30px auto;
+    padding: 30px 45px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Header/Contact Info */
+.resume-container[data-template="template-15"] .resume-header {
+    text-align: left;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+.resume-container[data-template="template-15"] .resume-header h1 {
+    font-size: 28pt;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.2;
+    color: #2c3e50;
+    /* Dark Blue */
+    border-bottom: 3px solid #3498db;
+    /* Bright Blue accent line */
+    display: inline-block;
+    padding-right: 10px;
+    margin-bottom: 10px;
+}
+
+.resume-container[data-template="template-15"] .section-contact {
+    font-size: 10pt;
+    color: #555;
+}
+
+.resume-container[data-template="template-15"] .section-contact div {
+    margin-bottom: 2px;
+}
+
+/* Profile Section */
+.resume-container[data-template="template-15"] .section-profile {
+    font-size: 11pt;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+/* Section Title Styling */
+.resume-container[data-template="template-15"] .section-title {
+    font-size: 14pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #2c3e50;
+    /* Dark Blue Rule */
+    color: #2c3e50;
+}
+
+/* Experience/Education Item Styling */
+.resume-container[data-template="template-15"] .item-container {
+    margin-bottom: 15px;
+    position: relative;
+    padding-right: 120px;
+}
+
+.resume-container[data-template="template-15"] h3 {
+    font-size: 13pt;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+}
+
+.resume-container[data-template="template-15"] .job-details,
+.resume-container[data-template="template-15"] .degree-details {
+    font-size: 11pt;
+    font-style: italic;
+    font-weight: 400;
+    margin: 0;
+    color: #555;
+}
+
+.resume-container[data-template="template-15"] .item-date {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 10pt;
+    font-weight: 400;
+    color: #555;
+}
+
+/* List Styling */
+.resume-container[data-template="template-15"] ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-top: 5px;
+    font-size: 10pt;
+}
+
+.resume-container[data-template="template-15"] li {
+    margin-bottom: 5px;
+}
+
+/* Skills/Software Section */
+.resume-container[data-template="template-15"] .section-skills .item-container,
+.resume-container[data-template="template-15"] .section-software .item-container {
+    margin-bottom: 15px;
+}
+
+.resume-container[data-template="template-15"] .skill-name {
+    font-size: 11pt;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.resume-container[data-template="template-15"] .skill-description {
+    font-size: 10pt;
+    color: #555;
+    margin-top: 2px;
+}
+
+/* Software Section Specific (Bar chart) */
+.resume-container[data-template="template-15"] .software-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 10pt;
+}
+
+.resume-container[data-template="template-15"] .software-name {
+    width: 30%;
+    font-weight: 600;
+}
+
+.resume-container[data-template="template-15"] .skill-bar-container {
+    width: 55%;
+    height: 12px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-right: 10px;
+}
+
+.resume-container[data-template="template-15"] .skill-bar-fill {
+    height: 100%;
+    background-color: #3498db;
+    /* Bright Blue fill */
+}
+
+.resume-container[data-template="template-15"] .skill-bar-label {
+    width: 15%;
+    text-align: right;
+    font-style: italic;
+    color: #555;
+}

@@ -1,0 +1,34 @@
+/* User will add CSS manually */
+@media print {
+    @page {
+        margin: 0;
+        size: A4;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-size: 11pt;
+    }
+
+    .resume-container {
+        display: block !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 45px;
+    }
+
+    .resume-header {
+        background-color: transparent !important; /* Remove purple background on name */
+        border-bottom: 1px solid #9370DB !important; /* Keep a subtle line */
+        padding-bottom: 15px !important;
+    }
+
+    .section-title {
+        background-color: #f0f0ff !important; /* Keep light purple background */
+    }
+
+    .no-break {
+        break-inside: avoid;
+    }
+}

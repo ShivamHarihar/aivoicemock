@@ -1,0 +1,560 @@
+{% extends "base.html" %}
+
+{% block title %}Resume Builder - SAMPRO AI{% endblock %}
+
+{% block content %}
+<div class="builder-container">
+    <!-- Left Sidebar: Dynamic Content -->
+    <div class="builder-sidebar">
+        <!-- Persistent Header -->
+        <div class="sidebar-header">
+            <h3 id="sidebarTitle">Resume Content</h3>
+            <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-light" onclick="loadSampleData()" title="Auto Fill"><i
+                        class="fas fa-magic"></i></button>
+                <button class="btn btn-sm btn-light" onclick="exportPDF()" title="Download PDF"><i
+                        class="fas fa-download"></i></button>
+            </div>
+        </div>
+
+        <!-- Dynamic Area: List or Form -->
+        <div id="sidebarContent" class="sidebar-content">
+            <!-- Injected via JS -->
+        </div>
+
+        <!-- Add Content Button (Visible in overview) -->
+        <div id="addContentWrapper" class="p-3 border-top">
+            <button class="btn btn-outline-primary w-100 fw-bold" data-bs-toggle="modal"
+                data-bs-target="#addContentModal">
+                <i class="fas fa-plus-circle me-2"></i> Add Content
+            </button>
+        </div>
+    </div>
+
+    <!-- Right: Preview -->
+    <div class="builder-preview">
+        <div class="preview-toolbar">
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted small">Template:</span>
+                <select class="form-select form-select-sm w-auto border-0 bg-transparent fw-bold" id="templateSelect"
+                    onchange="changeTemplate(this.value)">
+                    <option value="modern">Modern</option>
+                </select>
+            </div>
+            <div class="zoom-controls">
+                <button class="btn btn-sm btn-icon" onclick="zoom(-0.1)"><i class="fas fa-minus"></i></button>
+                <span id="zoomLevel" class="mx-2 small text-muted">80%</span>
+                <button class="btn btn-sm btn-icon" onclick="zoom(0.1)"><i class="fas fa-plus"></i></button>
+            </div>
+        </div>
+
+        <div class="preview-canvas-wrapper">
+            <iframe id="resumePreviewFrame" class="resume-sheet" style="border:none;"></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- Add Content Modal -->
+
+
+<style>
+    /* New Layout Styles */
+    .builder-container {
+        display: flex;
+        height: calc(100vh - 70px);
+        padding-top: 70px;
+        background: #f8f9fa;
+        overflow: hidden;
+        font-family: 'DM Sans', 'Inter', sans-serif;
+    }
+
+    /* Sidebar */
+    .builder-sidebar {
+        width: 420px;
+        background: white;
+        border-right: 1px solid #eaeaea;
+        display: flex;
+        flex-direction: column;
+        z-index: 10;
+        box-shadow: 4px 0 16px rgba(0, 0, 0, 0.02);
+    }
+
+    .sidebar-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .sidebar-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px 24px;
+    }
+
+    /* Overview List Styles */
+    .section-item {
+        display: flex;
+        align-items: center;
+        padding: 16px;
+        background: white;
+        border: 1px solid #eee;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .section-item:hover {
+        border-color: #ff3366;
+        box-shadow: 0 4px 12px rgba(255, 51, 102, 0.05);
+        transform: translateY(-2px);
+    }
+
+    .section-item i {
+        font-size: 1.2rem;
+        color: #666;
+        width: 40px;
+        height: 40px;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        margin-right: 16px;
+    }
+
+    .section-item:hover i {
+        background: rgba(255, 51, 102, 0.1);
+        color: #ff3366;
+    }
+
+    .section-info {
+        flex: 1;
+    }
+
+    .section-title {
+        font-weight: 600;
+        color: #1a1a2e;
+        display: block;
+    }
+
+    .section-meta {
+        font-size: 0.8rem;
+        color: #999;
+    }
+
+    /* Modal Grid */
+    .section-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .section-option {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        height: 100%;
+    }
+
+    .section-option:hover {
+        background: white;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+    }
+
+    .section-option i {
+        font-size: 1.4rem;
+        margin-bottom: 12px;
+        color: #1a1a2e;
+    }
+
+    .opt-title {
+        font-weight: 700;
+        margin-bottom: 4px;
+        display: block;
+        color: #1a1a2e;
+    }
+
+    .opt-desc {
+        font-size: 0.85rem;
+        color: #666;
+        line-height: 1.4;
+    }
+
+    /* Form Styles (From previous step, refined) */
+    .form-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #333;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+
+    .form-control:focus {
+        border-color: #ff3366;
+        box-shadow: 0 0 0 4px rgba(255, 51, 102, 0.1);
+    }
+
+    .back-btn {
+        margin-bottom: 20px;
+        color: #666;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .back-btn:hover {
+        color: #1a1a2e;
+    }
+
+    /* Preview etc */
+    .builder-preview {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: #2d3436;
+    }
+
+    .preview-toolbar {
+        padding: 0 20px;
+        height: 60px;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .resume-sheet {
+        width: 210mm;
+        height: 297mm;
+        background: white;
+        transform: scale(0.8);
+        transition: transform 0.2s;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .preview-canvas-wrapper {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        overflow: auto;
+        padding: 40px;
+        align-items: flex-start;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // State Management
+    const state = {
+        zoom: 0.8,
+        activeSection: null, // null = overview, or 'personal', 'experience', etc.
+        data: {
+            name: '', title: '', email: '', phone: '', summary: '',
+            experience: [], education: [], skills: '', languages: [], projects: []
+        },
+        templateId: '{{ template_id|default("modern") }}',
+        enabledSections: ['personal', 'experience', 'education', 'skills'] // Ordered List of sections to show
+    };
+
+    const SECTION_CONFIG = {
+        'personal': { title: 'Personal Information', icon: 'fa-user', desc: 'Name, Title, Contact Info' },
+        'experience': { title: 'Professional Experience', icon: 'fa-briefcase', desc: 'Work history, Internships' },
+        'education': { title: 'Education', icon: 'fa-graduation-cap', desc: 'Degrees, Schools, Dates' },
+        'skills': { title: 'Skills', icon: 'fa-bolt', desc: 'Technical & Soft Skills' },
+        'languages': { title: 'Languages', icon: 'fa-language', desc: 'Languages & Proficiency' },
+        'projects': { title: 'Projects', icon: 'fa-folder-open', desc: 'Key projects & Case studies' },
+        'custom': { title: 'Custom Section', icon: 'fa-puzzle-piece', desc: 'Additional info' }
+    };
+
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+        // Init Template Select
+        const select = document.getElementById('templateSelect');
+        if (!select.querySelector(`option[value="${state.templateId}"]`)) {
+            const opt = document.createElement('option');
+            opt.value = state.templateId;
+            opt.text = state.templateId;
+            select.add(opt);
+        }
+        select.value = state.templateId;
+
+        loadSampleData();
+        renderSidebar(); // Initial render
+    });
+
+    // --- Sidebar & Navigation Logic ---
+
+    function renderSidebar() {
+        const container = document.getElementById('sidebarContent');
+        const titleEl = document.getElementById('sidebarTitle');
+        const addBtn = document.getElementById('addContentWrapper');
+
+        if (!state.activeSection) {
+            // VIEW: Overview (Section List)
+            titleEl.textContent = "Resume Content";
+            addBtn.style.display = 'block';
+
+            let html = state.enabledSections.map(key => {
+                const cfg = SECTION_CONFIG[key] || { title: key, icon: 'fa-file', desc: '' };
+                return `
+                <div class="section-item fade-up" onclick="editSection('${key}')">
+                    <i class="fas ${cfg.icon}"></i>
+                    <div class="section-info">
+                        <span class="section-title">${cfg.title}</span>
+                        <span class="section-meta">${getSectionMeta(key)}</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-muted" style="font-size:0.8rem; background:none; width:auto;"></i>
+                </div>`;
+            }).join('');
+
+            container.innerHTML = html;
+        } else {
+            // VIEW: Edit Form
+            const key = state.activeSection;
+            const cfg = SECTION_CONFIG[key] || { title: key };
+            titleEl.textContent = cfg.title;
+            addBtn.style.display = 'none';
+
+            let formHtml = `<div class="back-btn" onclick="state.activeSection=null; renderSidebar();"><i class="fas fa-arrow-left me-2"></i> Back to Content</div>`;
+
+            // Generate Form based on Section Type
+            if (key === 'personal') {
+                formHtml += renderPersonalForm();
+            } else if (key === 'experience') {
+                formHtml += renderListForm('experience');
+            } else if (key === 'education') {
+                formHtml += renderListForm('education');
+            } else if (key === 'skills') {
+                formHtml += `
+                    <div class="mb-3">
+                        <label class="form-label">Technical Skills (Comma separated)</label>
+                        <textarea class="form-control" rows="6" oninput="updateField('skills', this.value)">${state.data.skills}</textarea>
+                    </div>`;
+            } else {
+                formHtml += `<div class="p-4 text-center text-muted">Field editing coming soon for ${key}</div>`;
+            }
+
+            container.innerHTML = formHtml;
+        }
+    }
+
+    function editSection(key) {
+        state.activeSection = key;
+        renderSidebar();
+    }
+
+    function addSection(key) {
+        if (!state.enabledSections.includes(key)) {
+            state.enabledSections.push(key);
+        }
+        // Hide Modal manually
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addContentModal'));
+        modal.hide();
+
+        // Go straight to edit
+        editSection(key);
+    }
+
+    function getSectionMeta(key) {
+        if (key === 'personal') return state.data.name || 'Incomplete';
+        if (key === 'experience') return `${state.data.experience.length} Positions`;
+        if (key === 'education') return `${state.data.education.length} Schools`;
+        if (key === 'skills') return state.data.skills ? 'Added' : 'Empty';
+        return '';
+    }
+
+    // --- Form Renderers ---
+
+    function renderPersonalForm() {
+        const d = state.data;
+        return `
+            <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input class="form-control" value="${d.name}" oninput="updateField('name', this.value)">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Job Title</label>
+                <input class="form-control" value="${d.title}" oninput="updateField('title', this.value)">
+            </div>
+            <div class="row g-2 mb-3">
+                <div class="col-6">
+                    <label class="form-label">Email</label>
+                    <input class="form-control" value="${d.email}" oninput="updateField('email', this.value)">
+                </div>
+                <div class="col-6">
+                    <label class="form-label">Phone</label>
+                    <input class="form-control" value="${d.phone}" oninput="updateField('phone', this.value)">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Professional Summary</label>
+                <textarea class="form-control" rows="5" oninput="updateField('summary', this.value)">${d.summary}</textarea>
+            </div>
+        `;
+    }
+
+    function renderListForm(type) {
+        const list = state.data[type];
+        let html = '<div id="listContainer">';
+
+        list.forEach((item, index) => {
+            if (type === 'experience') html += renderExperienceCard(item, index);
+            if (type === 'education') html += renderEducationCard(item, index);
+        });
+
+        html += `</div>
+            <button class="btn btn-outline-primary w-100 mt-3" onclick="addItem('${type}')">
+                <i class="fas fa-plus me-2"></i> Add ${type === 'experience' ? 'Position' : 'School'}
+            </button>
+        `;
+        return html;
+    }
+
+    // --- Cards & Item Logic ---
+
+    function renderExperienceCard(item, index) {
+        return `
+        <div class="card mb-3 border-0 shadow-sm">
+            <div class="card-body p-3 bg-light rounded-3 relative">
+                <div class="d-flex justify-content-end mb-2">
+                     <button class="btn btn-sm text-danger" onclick="removeItem('experience', ${index})"><i class="fas fa-trash"></i></button>
+                </div>
+                <div class="mb-2">
+                    <input class="form-control fw-bold" placeholder="Job Title" value="${item.role}" oninput="updateItem('experience', ${index}, 'role', this.value)">
+                </div>
+                <div class="mb-2">
+                    <input class="form-control" placeholder="Company" value="${item.company}" oninput="updateItem('experience', ${index}, 'company', this.value)">
+                </div>
+                <div class="row g-2 mb-2">
+                     <div class="col-6"><input class="form-control" placeholder="Start" value="${item.start || ''}" oninput="updateItem('experience', ${index}, 'start', this.value)"></div>
+                     <div class="col-6"><input class="form-control" placeholder="End" value="${item.end || ''}" oninput="updateItem('experience', ${index}, 'end', this.value)"></div>
+                </div>
+                <textarea class="form-control" rows="3" placeholder="Description" oninput="updateItem('experience', ${index}, 'description', this.value)">${item.description}</textarea>
+            </div>
+        </div>`;
+    }
+
+    function renderEducationCard(item, index) {
+        return `
+        <div class="card mb-3 border-0 shadow-sm">
+            <div class="card-body p-3 bg-light rounded-3">
+                 <div class="d-flex justify-content-end mb-2">
+                     <button class="btn btn-sm text-danger" onclick="removeItem('education', ${index})"><i class="fas fa-trash"></i></button>
+                </div>
+                <div class="mb-2">
+                    <input class="form-control fw-bold" placeholder="School" value="${item.institution}" oninput="updateItem('education', ${index}, 'institution', this.value)">
+                </div>
+                <div class="row g-2 mb-2">
+                    <div class="col-8"><input class="form-control" placeholder="Degree" value="${item.degree}" oninput="updateItem('education', ${index}, 'degree', this.value)"></div>
+                    <div class="col-4"><input class="form-control" placeholder="Year" value="${item.year}" oninput="updateItem('education', ${index}, 'year', this.value)"></div>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    // --- Data Updates ---
+
+    function updateField(field, val) {
+        state.data[field] = val;
+        renderTemplate();
+    }
+
+    function updateItem(type, index, field, val) {
+        state.data[type][index][field] = val;
+        renderTemplate();
+    }
+
+    function addItem(type) {
+        if (type === 'experience') state.data.experience.push({ role: '', company: '', description: '' });
+        if (type === 'education') state.data.education.push({ institution: '', degree: '', year: '' });
+        renderSidebar(); // Re-render form list
+        renderTemplate();
+    }
+
+    function removeItem(type, index) {
+        state.data[type].splice(index, 1);
+        renderSidebar();
+        renderTemplate();
+    }
+
+    function loadSampleData() {
+        state.data = {
+            name: 'Alex Morgan',
+            title: 'Product Designer',
+            email: 'alex.morgan@example.com',
+            phone: '(555) 123-4567',
+            summary: 'Creative and detail-oriented Product Designer with over 6 years of experience.',
+            skills: 'Figma, Sketch, Adobe XD, HTML/CSS, Prototyping, User Research',
+            experience: [
+                { role: 'Senior Designer', company: 'Creative Solutions', start: '2020', end: 'Present', description: 'Redesigned main product suite.' },
+                { role: 'UI Designer', company: 'TechFlow', start: '2016', end: '2019', description: 'Created design systems.' }
+            ],
+            education: [
+                { institution: 'Design Academy', degree: 'B.A. Interaction Design', year: '2016' }
+            ],
+            languages: [], projects: []
+        };
+        renderSidebar();
+        renderTemplate();
+    }
+
+    // --- Preview & Utils ---
+
+    function changeTemplate(id) {
+        state.templateId = id;
+        renderTemplate();
+    }
+
+    function zoom(d) {
+        state.zoom += d;
+        document.getElementById('resumePreviewFrame').style.transform = `scale(${state.zoom})`;
+        document.getElementById('zoomLevel').innerText = Math.round(state.zoom * 100) + '%';
+    }
+
+    function renderTemplate() {
+        const iframe = document.getElementById('resumePreviewFrame');
+        if (!iframe) return;
+
+        const d = state.data;
+        let cssPath = state.templateId.startsWith('theme-') ? `/static/css/themes/${state.templateId}.css` : `/static/css/themes/theme-1.css`;
+
+        // Simplified Render Logic for brevity (Full logic in previous step was good, reusing core parts)
+        const content = `<!DOCTYPE html><html><head><link rel="stylesheet" href="${cssPath}">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"><style>body{margin:0;}</style></head><body>
+            <div class="resume-wrapper">
+                <div class="header"><h1>${d.name}</h1><h3>${d.title}</h3><div>${d.email} • ${d.phone}</div></div>
+                <div class="main-content">
+                    ${d.summary ? `<div class="section"><h2>Summary</h2><p>${d.summary}</p></div>` : ''}
+                    ${d.experience.length ? `<div class="section"><h2>Experience</h2>${d.experience.map(e => `<div class="item"><strong>${e.role}</strong> at ${e.company}<p>${e.description}</p></div>`).join('')}</div>` : ''}
+                    ${d.education.length ? `<div class="section"><h2>Education</h2>${d.education.map(e => `<div><strong>${e.institution}</strong> ${e.degree} ${e.year}</div>`).join('')}</div>` : ''}
+                    ${d.skills ? `<div class="section"><h2>Skills</h2><p>${d.skills}</p></div>` : ''}
+                </div>
+            </div>
+        </body></html>`;
+
+        iframe.srcdoc = content;
+    }
+
+    function exportPDF() {
+        const iframe = document.getElementById('resumePreviewFrame');
+        if (iframe) iframe.contentWindow.print();
+    }
+</script>
+{% endblock %}

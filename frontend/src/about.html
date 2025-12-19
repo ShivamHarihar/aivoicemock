@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}About Us | AI Interviewer{% endblock %}
+
+{% block content %}
+<section class="section ats-section">
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header fade-up">
+            <h1>Our <span class="text-gradient">Mission</span></h1>
+            <p class="subtitle">Democratizing career success through artificial intelligence.</p>
+        </div>
+
+        <!-- About Content -->
+        <div class="glass-panel fade-up about-content">
+            <h2>Who We Are</h2>
+            <p>We are a team of engineers, designers, and career coaches dedicated to solving one problem: the
+                anxiety
+                of the job interview. We believe that with the right preparation, anyone can land their dream job.
+            </p>
+
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" data-target="10000">0</div>
+                    <div class="stat-label">Interviews Conducted</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="95" data-suffix="%">0</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Availability</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-section fade-up">
+            <h2 class="section-title">How It Works</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-marker">1</div>
+                    <div class="timeline-content">
+                        <h3>Upload Resume</h3>
+                        <p>Our AI analyzes your experience to tailor questions specifically to you.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker">2</div>
+                    <div class="timeline-content">
+                        <h3>Choose Mode</h3>
+                        <p>Select from HR, Technical, or Behavioral interview simulations.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker">3</div>
+                    <div class="timeline-content">
+                        <h3>Practice</h3>
+                        <p>Speak naturally with our voice-enabled AI interviewer.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker">4</div>
+                    <div class="timeline-content">
+                        <h3>Get Feedback</h3>
+                        <p>Receive instant, actionable feedback on your performance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="values-section fade-up">
+            <h2 class="section-title">Our Core Values</h2>
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon">🎯</div>
+                    <h3>Accessibility</h3>
+                    <p>Interview preparation should be available to everyone, anytime, anywhere.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">🚀</div>
+                    <h3>Innovation</h3>
+                    <p>Leveraging cutting-edge AI to create the most realistic interview experience.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">💡</div>
+                    <h3>Empowerment</h3>
+                    <p>Building confidence through practice and personalized feedback.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">🤝</div>
+                    <h3>Support</h3>
+                    <p>Providing guidance and resources every step of your career journey.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tech-section fade-up">
+            <h2 class="section-title">Powered by Advanced Technology</h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <div class="tech-badge">AI/ML</div>
+                    <h4>Natural Language Processing</h4>
+                    <p>Advanced NLP models understand context and provide human-like responses.</p>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-badge">Voice</div>
+                    <h4>Speech Recognition</h4>
+                    <p>Real-time voice analysis for natural conversation flow.</p>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-badge">Analytics</div>
+                    <h4>Performance Tracking</h4>
+                    <p>Detailed insights into your interview performance and progress.</p>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-badge">Security</div>
+                    <h4>Data Privacy</h4>
+                    <p>Enterprise-grade security to protect your personal information.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-panel cta-panel fade-up">
+            <h2>Ready to Ace Your Next Interview?</h2>
+            <p>Join thousands of successful candidates who have improved their interview skills with our
+                AI-powered
+                platform.</p>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-large">Start Practicing Now</a>
+        </div>
+    </div>
+</section>
+
+<script src="{{ url_for('static', filename='js/about.js') }}"></script>
+{% endblock %}

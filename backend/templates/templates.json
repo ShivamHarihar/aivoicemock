@@ -1,0 +1,64 @@
+{
+    "templates": {
+        "modern": {
+            "name": "Modern",
+            "css_path": "backend/templates/css/modern.css",
+            "preview_path": "backend/templates/previews/modern.html",
+            "description": "Clean sans-serif with blue accents"
+        },
+        "classic": {
+            "name": "Classic",
+            "css_path": "backend/templates/css/classic.css",
+            "preview_path": "backend/templates/previews/classic.html",
+            "description": "Traditional Times New Roman"
+        },
+        "professional": {
+            "name": "Professional",
+            "css_path": "backend/templates/css/professional.css",
+            "preview_path": "backend/templates/previews/professional.html",
+            "description": "Executive navy blue style"
+        },
+        "creative": {
+            "name": "Creative",
+            "css_path": "backend/templates/css/creative.css",
+            "preview_path": "backend/templates/previews/creative.html",
+            "description": "Two-column with vibrant colors"
+        },
+        "minimal": {
+            "name": "Minimal",
+            "css_path": "backend/templates/css/minimal.css",
+            "preview_path": "backend/templates/previews/minimal.html",
+            "description": "Clean minimalist design"
+        },
+        "template-1": {
+            "name": "Dark Sidebar",
+            "css_path": "backend/templates/template-1/styles.css",
+            "preview_path": "backend/templates/template-1/index.html",
+            "description": "Professional dark sidebar design"
+        },
+        "template-2": {
+            "name": "Split Column",
+            "css_path": "backend/templates/template-2/styles.css",
+            "preview_path": "backend/templates/template-2/index.html",
+            "description": "Two-column split with header band"
+        },
+        "template-3": {
+            "name": "Highlights",
+            "css_path": "backend/templates/template-3/styles.css",
+            "preview_path": "backend/templates/template-3/index.html",
+            "description": "Single column with key achievements"
+        },
+        "template-4": {
+            "name": "Teal Sidebar",
+            "css_path": "backend/templates/template-4/styles.css",
+            "preview_path": "backend/templates/template-4/index.html",
+            "description": "Heavy left sidebar with timeline"
+        },
+        "template-5": {
+            "name": "Boxed Right",
+            "css_path": "backend/templates/template-5/styles.css",
+            "preview_path": "backend/templates/template-5/index.html",
+            "description": "Header band with boxed right column"
+        }
+    }
+}

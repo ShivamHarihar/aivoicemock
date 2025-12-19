@@ -1,0 +1,176 @@
+/* Template 7: Brian T. Wayne (Minimalist, Two-Column Green Sidebar) */
+/* Reference: Screenshot 2025-12-12 164335.png */
+
+/* This template is a modification of Template 6, removing the photo and adjusting details */
+@import url('../css/base_styles.css');
+
+body.template-12 {
+    font-family: 'Georgia', 'Times New Roman', Times, serif;
+    color: #333;
+    background: #f4f4f4;
+    font-size: 11pt;
+    line-height: 1.5;
+}
+
+.resume-container[data-template="template-12"] {
+    display: grid;
+    grid-template-columns: 35% 65%;
+    /* Two-column layout */
+    /* A4 Dimensions */
+    width: 210mm;
+    min-height: 297mm;
+    margin: 30px auto;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Sidebar (Left Column - Light Green) */
+.resume-container[data-template="template-12"] .sidebar {
+    background-color: #E6EDE9;
+    /* Light Mint Green */
+    color: #333;
+    padding: 40px 25px;
+}
+
+.resume-container[data-template="template-12"] .resume-header {
+    margin-bottom: 20px;
+}
+
+.resume-container[data-template="template-12"] .resume-header h1 {
+    font-size: 24pt;
+    font-weight: 500;
+    margin: 0 0 5px 0;
+    line-height: 1.1;
+    color: #000;
+}
+
+.resume-container[data-template="template-12"] .resume-header .job-title {
+    font-size: 14pt;
+    font-weight: 300;
+    margin: 0;
+    color: #555;
+}
+
+/* Sidebar Sections */
+.resume-container[data-template="template-12"] .section-contact {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.resume-container[data-template="template-12"] .section-contact ul {
+    list-style: none;
+    padding: 0;
+    font-size: 10pt;
+}
+
+.resume-container[data-template="template-12"] .section-contact li {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.resume-container[data-template="template-12"] .section-contact i {
+    margin-right: 10px;
+    font-size: 12pt;
+    color: #6B8E23;
+    /* Olive Green icon */
+    flex-shrink: 0;
+    padding-top: 2px;
+}
+
+.resume-container[data-template="template-12"] .section-profile p {
+    font-size: 10pt;
+    line-height: 1.6;
+    color: #555;
+    margin-top: 10px;
+}
+
+.resume-container[data-template="template-12"] .sidebar h2 {
+    font-size: 12pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 30px 0 10px 0;
+    color: #000;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #6B8E23;
+    /* Olive Green rule */
+}
+
+/* Sidebar Education (Same as Template 3 structure, but in green sidebar) */
+.resume-container[data-template="template-12"] .section-education .item-container {
+    margin-bottom: 15px;
+    font-size: 10pt;
+}
+
+.resume-container[data-template="template-12"] .section-education h3 {
+    font-weight: 700;
+    margin: 0;
+    color: #333;
+}
+
+.resume-container[data-template="template-12"] .section-education .degree-details {
+    font-style: normal;
+    font-weight: 400;
+    color: #555;
+    margin: 0;
+}
+
+/* Main Content (Uses the same styling as Template 3 and 6) */
+.resume-container[data-template="template-12"] .main-content {
+    padding: 40px 30px 40px 40px;
+    background-color: #fff;
+}
+
+.resume-container[data-template="template-12"] .main-content h2 {
+    font-size: 16pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 15px 0;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #333;
+    color: #333;
+}
+
+.resume-container[data-template="template-12"] .section-experience .item-container {
+    margin-bottom: 20px;
+    position: relative;
+    padding-right: 100px;
+}
+
+.resume-container[data-template="template-12"] .section-experience h3 {
+    font-size: 12pt;
+    font-weight: 700;
+    margin: 0 0 2px 0;
+    color: #333;
+}
+
+.resume-container[data-template="template-12"] .job-details {
+    font-size: 10pt;
+    font-style: italic;
+    font-weight: 400;
+    color: #555;
+    margin: 0;
+}
+
+.resume-container[data-template="template-12"] .item-date {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 10pt;
+    font-weight: 500;
+    color: #555;
+}
+
+.resume-container[data-template="template-12"] ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-top: 5px;
+    font-size: 10pt;
+    line-height: 1.5;
+}
+
+.resume-container[data-template="template-12"] li {
+    margin-bottom: 5px;
+}

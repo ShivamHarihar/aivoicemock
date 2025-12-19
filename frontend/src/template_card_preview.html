@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview</title>
+    <!-- Base Styles needed? Maybe just the specific template styles -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            /* Card background */
+            overflow: hidden;
+            /* Hide scrollbars */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+        }
+
+        /* Loading state */
+        .loading {
+            font-family: sans-serif;
+            font-size: 12px;
+            color: #888;
+            margin-top: 20px;
+        }
+
+        /* Container for scaling */
+        #resume-preview {
+            transform-origin: top center;
+            /* We will set scale dynamically via JS */
+        }
+
+        /* Hide print specific things if any */
+        @media print {
+            body {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="resume-preview">
+        <div class="loading">Loading preview...</div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/static/js/template_preview.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const templateId = "{{ template_id }}";
+            const previewEl = document.getElementById('resume-preview');
+
+            // 1. Get Data
+            const dataStr = sessionStorage.getItem('recreated_resume_content');
+            if (!dataStr) {
+                previewEl.innerHTML = '<div class="loading">No data</div>';
+                return;
+            }
+
+            window.recreatedResumeData = JSON.parse(dataStr);
+
+            // 2. Generate HTML
+            // We use the existing function from template_preview.js
+            // But we need to make sure we load the CSS *specifically* for this frame
+            // updatePreviewWithTemplate(templateId) calls loadTemplateCSS(templateId) 
+            // which appends <link> to document.head. This is perfect for iframe isolation.
+
+            updatePreviewWithTemplate(templateId);
+
+            // 3. Scale to Fit
+            // Wait for render
+            setTimeout(() => {
+                const container = previewEl.querySelector('.resume-container');
+                if (container) {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const isModal = urlParams.get('mode') === 'modal';
+
+                    if (isModal) {
+                        // MODAL MODE: Enable scrolling
+                        document.body.style.overflow = 'auto'; // Allow scrolling
+                        document.body.style.height = 'auto'; // allow grow
+                        document.body.style.display = 'block'; // block layout for natural flow
+                        document.body.style.backgroundColor = 'transparent'; // Transparent to blend or white
+
+                        // We still scale to fit width if needed
+                        const contentWidth = container.offsetWidth || 800;
+                        // The modal iframe width is responsive, so we should check window.innerWidth
+                        const windowWidth = window.innerWidth;
+
+                        // In modal, we generally want 100% width, but maybe scale if content is huge?
+                        // Usually simpler: just let it flow. 
+                        // But if the resume is fixed width (A4), we might need to scale it down to fit mobile.
+
+                        if (contentWidth > windowWidth) {
+                            const scale = (windowWidth - 40) / contentWidth; // 20px padding
+                            previewEl.style.transformOrigin = 'top left';
+                            previewEl.style.transform = `scale(${scale})`;
+                            previewEl.style.margin = '20px';
+
+                            // Set height for scroll
+                            const scaledHeight = container.offsetHeight * scale + 50;
+                            document.body.style.height = `${scaledHeight}px`;
+                        } else {
+                            // Centered
+                            previewEl.style.margin = '20px auto';
+                        }
+
+                    } else {
+                        // THUMBNAIL MODE
+                        const contentWidth = container.offsetWidth || 800;
+                        const windowWidth = window.innerWidth;
+                        const scale = windowWidth / contentWidth;
+                        previewEl.style.transform = `scale(${scale})`;
+                        document.body.style.pointerEvents = 'none';
+                    }
+                }
+            }, 200);
+        });
+    </script>
+</body>
+
+</html>

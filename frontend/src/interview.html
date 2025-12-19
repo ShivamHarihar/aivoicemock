@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Interview Session | AI Interviewer{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: 120px;">
+    <div class="container">
+        <div class="glass-panel fade-up" style="max-width: 800px; margin: 0 auto; text-align: center; padding: 60px;">
+            <div class="interview-status">
+                <div class="status-indicator" id="status-indicator"></div>
+                <h2 id="status">Initializing...</h2>
+
+                <!-- Countdown Timer -->
+                <div class="timer-container" id="timer-container" style="margin-top: 20px; display: none;">
+                    <div class="timer-display">
+                        <div class="timer-phase" id="timer-phase">Q&A Phase</div>
+                        <div class="timer-time" id="timer-time">4:00</div>
+                        <div class="timer-label">Time Remaining</div>
+                    </div>
+                    <div class="timer-progress-bar">
+                        <div class="timer-progress-fill" id="timer-progress"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visualizer-container">
+                <div class="visualizer-circle"></div>
+                <div class="visualizer-circle delay-1"></div>
+                <div class="visualizer-circle delay-2"></div>
+            </div>
+
+            <div id="start-overlay" class="glass-panel"
+                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100; text-align: center; padding: 40px; display: none; width: 90%; max-width: 400px; background: rgba(17, 25, 40, 0.95);">
+                <h3>Ready to Begin?</h3>
+                <p style="color: var(--text-muted); margin: 10px 0 20px;">Find a quiet place and click start.</p>
+                <button class="btn btn-primary" onclick="beginSession()">Start Interview</button>
+            </div>
+
+            <div class="controls">
+                <div class="mic-status-icon">
+                    <span class="mic-icon" style="font-size: 3rem; display: block; margin-bottom: 10px;">🎙️</span>
+                </div>
+                <p class="instruction-text">Auto-detecting speech...</p>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;">
+                    💡 Tip: Pause for 1.5 seconds to auto-submit, or click "Force Send" anytime
+                </p>
+
+                <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+                    <button class="btn btn-sm btn-primary" onclick="stopRecording()" style="min-width: 140px;">
+                        ✓ Force Send
+                    </button>
+                    <button class="btn btn-sm btn-outline" onclick="resetSession()">Reset</button>
+                </div>
+            </div>
+
+            <div class="actions" style="margin-top: 40px;">
+                <button class="btn btn-outline" onclick="endInterview()">End Session</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    @keyframes pulse {
+        0% {
+            transform: scale(0.5);
+            opacity: 0;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+
+        100% {
+            transform: scale(1.5);
+            opacity: 0;
+        }
+    }
+
+    .interview-status {
+        margin-bottom: 40px;
+    }
+
+    .visualizer-container {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        margin: 0 auto 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .visualizer-circle {
+        position: absolute;
+        border-radius: 50%;
+        border: 2px solid var(--primary);
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    .mic-icon {
+        transition: color 0.3s ease;
+    }
+
+    .instruction-text {
+        margin-top: 16px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+        min-height: 24px;
+    }
+
+    .btn-sm {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+
+    /* Timer Styles */
+    .timer-container {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        padding: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .timer-display {
+        margin-bottom: 15px;
+    }
+
+    .timer-phase {
+        font-size: 0.9rem;
+        color: var(--primary);
+        font-weight: 600;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .timer-time {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #fff;
+        font-family: 'Courier New', monospace;
+        margin-bottom: 5px;
+    }
+
+    .timer-label {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .timer-progress-bar {
+        width: 100%;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .timer-progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        border-radius: 4px;
+        transition: width 1s linear;
+        width: 100%;
+    }
+
+    /* Phase-specific colors */
+    .timer-phase.qa-phase {
+        color: #10b981;
+    }
+
+    .timer-phase.summary-phase {
+        color: #f59e0b;
+    }
+
+    .timer-time.warning {
+        color: #f59e0b;
+        animation: pulse-warning 1s infinite;
+    }
+
+    .timer-time.critical {
+        color: #ef4444;
+        animation: pulse-critical 0.5s infinite;
+    }
+
+    @keyframes pulse-warning {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.7;
+        }
+    }
+
+    @keyframes pulse-critical {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,157 @@
+<!-- Template Selector - Standalone Section -->
+<!-- Replace lines 186-240 in ats_dashboard.html with this content -->
+
+<!-- Template Selector -->
+<div class="template-selector">
+    <h3 style="margin-bottom: 1.5rem; font-size: 1.2rem; color: #e5e7eb; font-weight: 600;">Choose Your Resume Style
+    </h3>
+    <div class="template-grid">
+
+        <!-- Modern Template -->
+        <label class="template-option" for="template-modern">
+            <input type="radio" id="template-modern" name="resume-template" value="modern" checked>
+            <div class="template-card active">
+                <div class="template-icon">💼</div>
+                <div class="template-name">Modern</div>
+                <div class="template-desc">Clean sans-serif with blue accents</div>
+            </div>
+        </label>
+
+        <!-- Classic Template -->
+        <label class="template-option" for="template-classic">
+            <input type="radio" id="template-classic" name="resume-template" value="classic">
+            <div class="template-card">
+                <div class="template-icon">📜</div>
+                <div class="template-name">Classic</div>
+                <div class="template-desc">Traditional Times New Roman</div>
+            </div>
+        </label>
+
+        <!-- Professional Template -->
+        <label class="template-option" for="template-professional">
+            <input type="radio" id="template-professional" name="resume-template" value="professional">
+            <div class="template-card">
+                <div class="template-icon">🎩</div>
+                <div class="template-name">Professional</div>
+                <div class="template-desc">Executive navy blue style</div>
+            </div>
+        </label>
+
+        <!-- Creative Template -->
+        <label class="template-option" for="template-creative">
+            <input type="radio" id="template-creative" name="resume-template" value="creative">
+            <div class="template-card">
+                <div class="template-icon">🎨</div>
+                <div class="template-name">Creative</div>
+                <div class="template-desc">Two-column with vibrant colors</div>
+            </div>
+        </label>
+
+        <!-- Minimal Template -->
+        <label class="template-option" for="template-minimal">
+            <input type="radio" id="template-minimal" name="resume-template" value="minimal">
+            <div class="template-card">
+                <div class="template-icon">✨</div>
+                <div class="template-name">Minimal</div>
+                <div class="template-desc">Clean minimalist design</div>
+            </div>
+        </label>
+
+    </div>
+</div>
+
+<style>
+    /* Template Selector Styles */
+    .template-selector {
+        margin: 2rem 0;
+        padding: 1.5rem;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .template-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1rem;
+    }
+
+    @media (max-width: 1200px) {
+        .template-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .template-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .template-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .template-option {
+        cursor: pointer !important;
+        display: block;
+        position: relative;
+    }
+
+    .template-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+        pointer-events: none;
+    }
+
+    .template-card {
+        padding: 1.25rem 1rem;
+        text-align: center;
+        border-radius: 10px;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.03);
+        transition: all 0.3s ease;
+        cursor: pointer !important;
+        user-select: none;
+    }
+
+    .template-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(99, 102, 241, 0.4);
+        background: rgba(99, 102, 241, 0.05);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+    }
+
+    .template-option input[type="radio"]:checked+.template-card,
+    .template-card.active {
+        border-color: rgba(99, 102, 241, 0.5) !important;
+        background: rgba(99, 102, 241, 0.15) !important;
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+    }
+
+    .template-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.75rem;
+        line-height: 1;
+        pointer-events: none;
+    }
+
+    .template-name {
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 0.4rem;
+        color: #e5e7eb;
+        pointer-events: none;
+    }
+
+    .template-desc {
+        font-size: 0.8rem;
+        color: #9ca3af;
+        line-height: 1.3;
+        pointer-events: none;
+    }
+</style>

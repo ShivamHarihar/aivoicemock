@@ -1,0 +1,42 @@
+@media print {
+    @page {
+        margin: 0;
+        size: A4;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-size: 10pt;
+    }
+
+    .resume-container {
+        display: block !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 45px;
+    }
+
+    .resume-header h1 {
+        color: #2c3e50 !important;
+    }
+    
+    .section-title {
+        border-bottom: 1px solid #2c3e50 !important;
+    }
+
+    /* Skills bar styling (remove bar background/shadow) */
+    .skill-bar-container {
+        border: 1px solid #ccc !important;
+        background-color: #fff !important;
+        box-shadow: none !important;
+    }
+
+    .skill-bar-fill {
+        background-color: #3498db !important; /* Keep blue fill */
+    }
+
+    .no-break {
+        break-inside: avoid;
+    }
+}

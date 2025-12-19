@@ -1,0 +1,47 @@
+
+:root {
+    --primary-color: #000000;
+    --secondary-color: #d50000;
+    --text-main: #333333;
+    --text-muted: #666666;
+    --bg-body: #ffffff;
+    --font-main: 'Open Sans', sans-serif;
+}
+body {
+    font-family: var(--font-main);
+    color: var(--text-main);
+    line-height: 1.6;
+    margin: 0; 
+    padding: 0;
+    box-sizing: border-box;
+}
+*, *::before, *::after { box-sizing: inherit; }
+h1, h2, h3, h4 { margin-top: 0; }
+a { text-decoration: none; color: inherit; }
+ul { padding-left: 1.2rem; margin: 0.5rem 0; }
+
+/* Layout: Classic (Centered Header, Linear) */
+.resume-wrapper { padding: 2rem; max-width: 800px; margin: 0 auto; }
+.header { text-align: center; border-bottom: 2px solid var(--primary-color); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+.header h1 { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 0.5rem; text-transform: uppercase; }
+.header h3 { font-size: 1.2rem; font-weight: 400; color: var(--text-muted); }
+.contact-info { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; font-size: 0.9rem; }
+
+.section { margin-bottom: 2rem; }
+.section h2 { 
+    color: var(--primary-color); 
+    font-size: 1.5rem; 
+    border-bottom: 1px solid #eee; 
+    padding-bottom: 0.5rem; 
+    margin-bottom: 1rem; 
+}
+
+.experience-item, .education-item { margin-bottom: 1.5rem; }
+.item-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.3rem; }
+.item-title { font-weight: 700; font-size: 1.1rem; }
+.item-subtitle { color: var(--text-muted); font-style: italic; }
+.item-date { font-size: 0.9rem; color: var(--primary-color); font-weight: 500; }
+
+.skills-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.skill-tag { background: #f5f5f5; padding: 0.3rem 0.8rem; border-radius: 4px; border: 1px solid #ddd; font-size: 0.9rem; }
+.skill-tag:hover { border-color: var(--primary-color); color: var(--primary-color); }

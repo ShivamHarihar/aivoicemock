@@ -1,0 +1,154 @@
+/* 
+ * Base Styles for All Resume Templates - Scoped
+ * ATS-Friendly, Print-Optimized, Semantic HTML5
+ */
+
+/* Scoped Reset */
+.resume-container * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.resume-container {
+    font-size: 16px;
+    line-height: 1.5;
+    background: white;
+    color: #000;
+    font-family: Arial, Helvetica, sans-serif;
+    /* max-width and margins handled by container styles in individual templates/style.css */
+}
+
+/* Typography */
+.resume-container h1,
+.resume-container h2,
+.resume-container h3,
+.resume-container h4,
+.resume-container h5,
+.resume-container h6 {
+    font-weight: bold;
+    line-height: 1.2;
+    page-break-after: avoid;
+}
+
+.resume-container h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.resume-container h2 {
+    font-size: 1.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.resume-container h3 {
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.resume-container p {
+    margin-bottom: 0.5rem;
+    text-align: justify;
+    orphans: 3;
+    widows: 3;
+}
+
+/* Lists - ATS Friendly */
+.resume-container ul,
+.resume-container ol {
+    margin-left: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.resume-container li {
+    margin-bottom: 0.25rem;
+    line-height: 1.4;
+}
+
+/* Links - Print as Plain Text */
+.resume-container a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* Emphasis */
+.resume-container strong,
+.resume-container b {
+    font-weight: bold;
+}
+
+.resume-container em,
+.resume-container i {
+    font-style: italic;
+}
+
+/* Horizontal Rules */
+.resume-container hr {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 1rem 0;
+}
+
+/* Sections */
+.resume-container section {
+    margin-bottom: 1.5rem;
+    page-break-inside: avoid;
+}
+
+/* Contact Info */
+.resume-container .contact-info {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+/* Skills Section */
+.resume-container .skills {
+    margin-bottom: 1rem;
+}
+
+.resume-container .skill-category {
+    margin-bottom: 0.5rem;
+}
+
+/* Experience Items */
+.resume-container .experience-item {
+    margin-bottom: 1.25rem;
+    page-break-inside: avoid;
+}
+
+.resume-container .job-title {
+    font-weight: bold;
+}
+
+.resume-container .company,
+.resume-container .duration {
+    font-style: italic;
+    color: #555;
+}
+
+/* Print Optimization */
+@media print {
+
+    /* Print media queries can't be easily scoped, but we assume print context is full page */
+    .resume-container {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .resume-container h2,
+    .resume-container h3 {
+        page-break-after: avoid;
+    }
+
+    .resume-container ul,
+    .resume-container ol {
+        page-break-inside: avoid;
+    }
+
+    .resume-container .experience-item {
+        page-break-inside: avoid;
+    }
+}

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Resume Analysis | SAMPRO AI{% endblock %}
+
+{% block content %}
+<section class="section ats-section">
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header fade-up">
+            <h1>Resume <span class="text-gradient">Analysis</span></h1>
+            <p class="subtitle">Get AI-powered insights to optimize your resume before your interview.</p>
+        </div>
+
+        <!-- Upload Panel - Centered -->
+        <div class="upload-center-wrapper">
+            <div class="glass-panel config-panel fade-up" id="upload-panel">
+                <h2>Upload Resume</h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Upload your PDF or TXT resume to get a
+                    comprehensive 360° analysis.</p>
+
+                <div class="input-group">
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="resume-upload" accept=".pdf,.txt" class="file-input" hidden>
+                        <label for="resume-upload" class="file-label">
+                            <span class="icon">📄</span>
+                            <span class="text">Click to upload PDF or TXT</span>
+                        </label>
+                    </div>
+                    <div id="file-name-display" class="file-name"></div>
+                </div>
+
+                <button id="analyze-btn-page" class="btn btn-primary btn-lg full-width" onclick="analyzeResumePage()">
+                    Analyze Now <div class="btn-glow"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // File upload handling
+    document.getElementById('resume-upload').addEventListener('change', function (e) {
+        if (e.target.files[0]) {
+            document.getElementById('file-name-display').textContent = 'Selected: ' + e.target.files[0].name;
+        }
+    });
+
+    async function analyzeResumePage() {
+        const resumeFile = document.getElementById('resume-upload').files[0];
+        if (!resumeFile) {
+            alert("Please select a file first.");
+            return;
+        }
+
+        const btn = document.getElementById('analyze-btn-page');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'Analyzing... <div class="spinner"></div>';
+        btn.disabled = true;
+
+        const formData = new FormData();
+        formData.append('resume', resumeFile);
+
+        try {
+            const res = await fetch('/api/analyze_resume', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.error) {
+                alert("Error: " + data.error);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            // Store analysis data in temporary session storage for loading page
+            sessionStorage.setItem('pending_analysis_data', JSON.stringify(data));
+            sessionStorage.setItem('pending_resume_text', data.resume_text || '');
+            sessionStorage.setItem('pending_file_name', resumeFile.name);
+            sessionStorage.setItem('pending_file_url', data.file_url || '');
+            sessionStorage.setItem('pending_file_type', data.file_type || 'txt');
+
+            // Redirect to loading page (which will then redirect to dashboard)
+            window.location.href = '/analysis_loading';
+
+        } catch (e) {
+            console.error("Analysis failed:", e);
+            alert("Analysis failed. Please try again.");
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    }
+</script>
+{% endblock %}

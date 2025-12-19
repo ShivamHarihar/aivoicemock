@@ -1,0 +1,127 @@
+/* User will add CSS manually */
+/* Template 1: Nadia Smith (Minimalist with Top Rule) */
+/* Reference: Screenshot 2025-12-12 164227.png */
+
+@import url('../css/base_styles.css');
+
+body.template-6 {
+    font-family: 'Times New Roman', Times, serif;
+    color: #333;
+    background: #f4f4f4;
+    font-size: 12pt;
+    line-height: 1.5;
+}
+
+.resume-container[data-template="template-6"] {
+    display: block;
+    /* A4 Dimensions */
+    width: 210mm;
+    min-height: 297mm;
+    margin: 30px auto;
+    padding: 30px 45px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Header/Contact Info */
+.resume-container[data-template="template-6"] .resume-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.resume-container[data-template="template-6"] .resume-header h1 {
+    font-size: 28pt;
+    font-weight: 400;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+    color: #000;
+}
+
+.resume-container[data-template="template-6"] .section-contact {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 10pt;
+    color: #555;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #000;
+    margin-bottom: 20px;
+}
+
+.resume-container[data-template="template-6"] .section-contact div {
+    display: flex;
+    align-items: center;
+}
+
+.resume-container[data-template="template-6"] .section-contact i {
+    margin-right: 5px;
+    color: #000;
+}
+
+/* Section Styling */
+.resume-container[data-template="template-6"] .section-title {
+    font-size: 10pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #000;
+}
+
+.resume-container[data-template="template-6"] .section-summary {
+    font-size: 11pt;
+    margin-bottom: 20px;
+}
+
+/* Experience/Education Item Styling */
+.resume-container[data-template="template-6"] .item-container {
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.resume-container[data-template="template-6"] h3 {
+    font-size: 12pt;
+    font-weight: bold;
+    margin: 0;
+    color: #000;
+}
+
+.resume-container[data-template="template-6"] .job-title,
+.resume-container[data-template="template-6"] .degree-details {
+    font-size: 11pt;
+    font-style: italic;
+    font-weight: 400;
+    margin: 0;
+    color: #555;
+}
+
+.resume-container[data-template="template-6"] .item-date {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 10pt;
+    font-weight: 400;
+    color: #555;
+}
+
+/* Specific styling for dates in education/work experience */
+.resume-container[data-template="template-6"] .section-education .item-container,
+.resume-container[data-template="template-6"] .section-experience .item-container {
+    padding-right: 120px;
+    /* Make space for the date on the right */
+}
+
+/* List Styling */
+.resume-container[data-template="template-6"] ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-top: 5px;
+    font-size: 11pt;
+}
+
+.resume-container[data-template="template-6"] li {
+    margin-bottom: 5px;
+}

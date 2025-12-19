@@ -1,0 +1,1413 @@
+================================================================================
+                    SAMPRO AI INTERVIEW PLATFORM
+                    END-TO-END PROJECT FLOW DOCUMENTATION
+================================================================================
+
+PROJECT OVERVIEW:
+-----------------
+Sampro AI is an advanced AI-powered mock interview platform that conducts 
+real-time voice interviews with candidates, analyzes their performance across 
+multiple dimensions (pace, confidence, content quality, emotional analysis), 
+and provides comprehensive feedback. It also includes an ATS Resume Analyzer 
+and AI-powered Resume Recreation tool.
+
+TECHNOLOGY STACK:
+-----------------
+Backend:
+  - Flask (Python web framework)
+  - Groq API (LLM for AI interviewer and analysis)
+  - Edge TTS (Text-to-Speech for AI voice)
+  - Whisper (Speech-to-Text for candidate transcription)
+  - SpaCy (NLP for resume parsing)
+  - ReportLab (PDF generation)
+  - PyPDF2 (PDF text extraction)
+
+Frontend:
+  - HTML5, CSS3, JavaScript (Vanilla)
+  - Web Speech API (Browser-based STT)
+  - Web Audio API (Voice Activity Detection & Visualization)
+  - Glassmorphism & Cyber-minimalist design
+
+AI/ML:
+  - Groq LLM (llama-3.3-70b-versatile)
+  - Audio analysis algorithms
+  - Sentiment & confidence scoring
+  - Real-time feedback generation
+
+================================================================================
+                        MAIN FEATURES & FLOWS
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                    FEATURE 1: AI VOICE INTERVIEW                         │
+└──────────────────────────────────────────────────────────────────────────┘
+
+FLOW OVERVIEW:
+--------------
+User → Dashboard → Interview Setup → Voice Interview → Real-time Analysis 
+→ Performance Summary → Results Page
+
+DETAILED STEP-BY-STEP FLOW:
+----------------------------
+
+1. USER LANDS ON HOMEPAGE (/)
+   File: frontend/src/index.html
+   - Premium landing page with glassmorphism design
+   - Features overview, pricing, about sections
+   - Call-to-action: "Start Interview" button
+
+2. USER NAVIGATES TO DASHBOARD (/dashboard)
+   File: frontend/src/dashboard.html
+   - Interview configuration form appears
+   - User selects:
+     * Interview Mode: HR, Technical, Behavioral
+     * Job Role: (e.g., Software Engineer, Data Scientist)
+     * Company: (e.g., Google, Amazon, Startup)
+     * Resume Upload: (Optional - for context)
+   
+   JavaScript: frontend/public/js/script.js → startInterview()
+   - Collects form data
+   - Uploads resume if provided (POST /upload_profile)
+   - Sends interview configuration (POST /start_call_interview)
+
+3. BACKEND: INTERVIEW INITIALIZATION
+   Endpoint: POST /start_call_interview
+   File: backend/app/app.py → start_call_interview()
+   
+   Process:
+   a) Generate unique session_id
+   b) Create session in memory store (backend/src/memory_store.py)
+   c) Store interview context (mode, job_role, company)
+   d) Generate welcoming greeting message:
+      - Example: "Hello! I'm your AI interviewer. Welcome to your 
+        Technical interview for the Software Engineer position at Google. 
+        I'm excited to learn more about you. Let's begin - please tell 
+        me about yourself."
+   e) Convert greeting to speech using Edge TTS
+      File: backend/src/edge_tts_client.py → generate_audio_sync()
+   f) Save audio file: {session_id}_greeting.mp3
+   g) Return: session_id, message text, audio_url
+
+4. REDIRECT TO INTERVIEW PAGE (/interview)
+   File: frontend/src/interview.html
+   URL: /interview?session_id={id}&audio={url}&text={message}
+   
+   Components:
+   - Audio visualizer (animated circles)
+   - Status indicator (Listening/Processing/AI Speaking)
+   - Real-time feedback display
+   - Timer (20-minute total: 15 min Q&A + 5 min summary)
+   - Manual "Done Speaking" button
+
+5. INTERVIEW PAGE INITIALIZATION
+   JavaScript: frontend/public/js/script.js
+   
+   Process:
+   a) Request microphone access
+   b) Initialize Voice Activity Detection (VAD)
+      - Uses Web Audio API
+      - Analyzes audio frequency data
+      - Updates visualizer in real-time
+   c) Play AI greeting audio
+   d) After greeting ends, start listening for user response
+
+6. VOICE ACTIVITY DETECTION & RECORDING
+   JavaScript: initVAD() and startRecording()
+   
+   Process:
+   a) Browser Speech Recognition API starts
+      - Continuous listening mode
+      - Interim results enabled
+      - Language: English (en-US)
+   
+   b) Real-time transcription:
+      - Shows "Hearing: {interim text}..." while user speaks
+      - Updates to "Got it: {final text}" when sentence completes
+   
+   c) Silence detection:
+      - Waits 1.5 seconds of silence after speech
+      - Prevents interrupting mid-sentence
+      - Adds 800ms buffer for safety
+   
+   d) When silence detected:
+      - Stops recording
+      - Status: "Processing..."
+      - Sends transcript to backend
+
+7. BACKEND: PROCESS USER ANSWER
+   Endpoint: POST /process_voice
+   File: backend/app/app.py → process_voice()
+   
+   Input: {session_id, user_text}
+   
+   Process Flow:
+   a) Retrieve session context from memory
+   b) Call Interview Engine to process answer
+      File: backend/src/interview_engine.py → process_answer()
+
+8. INTERVIEW ENGINE: CORE PROCESSING PIPELINE
+   File: backend/src/interview_engine.py → process_answer()
+   
+   STEP 1: Check Interview Phase
+   - Calculate elapsed time since interview start
+   - If < 15 minutes: Q&A Phase
+   - If >= 15 minutes: Performance Summary Phase
+   
+   STEP 2: Audio Analysis
+   File: backend/src/audio_analyzer.py → analyze_text()
+   
+   Analyzes:
+   - Word count
+   - Filler words (um, uh, like, you know, actually, basically)
+   - Speaking pace (Words Per Minute)
+     * Ideal: 120-160 WPM
+     * Too slow: < 100 WPM
+     * Too fast: > 180 WPM
+   - Confidence score (0-100) based on:
+     * Filler word ratio
+     * Pace consistency
+     * Sentence structure
+   - Script reading detection (overly formal language)
+   
+   Output: {
+     word_count, filler_count, pace_wpm, confidence_score,
+     confidence_level, pace_category, issues[], tips[]
+   }
+   
+   STEP 3: Mistake Detection
+   File: backend/src/mistake_detector.py → detect_all_mistakes()
+   
+   Checks:
+   - Rambling (answer too long or repetitive)
+   - Relevance (does answer address the question?)
+   - Structure (STAR method: Situation, Task, Action, Result)
+   - Coherence and clarity
+   
+   Uses LLM to analyze content quality
+   
+   Output: {
+     rambling, relevance_check, structure_analysis, mistakes[]
+   }
+   
+   STEP 4: Calculate Local Metrics
+   File: backend/src/scoring.py → calculate_local_metrics()
+   
+   Calculates deterministic scores:
+   - Clarity index (based on word count)
+   - Fluency ratio (1 - filler_ratio)
+   - Pace score (optimal WPM range)
+   
+   Combined local score: 0-10 scale
+   
+   STEP 5: Generate AI Response
+   File: backend/src/grok_client.py → generate_response()
+   
+   Constructs prompt with:
+   - Interview mode (HR/Technical/Behavioral)
+   - Job role and company context
+   - Conversation history
+   - User's answer
+   - Real-time analysis (pace, confidence, mistakes)
+   - Question difficulty distribution (30% easy, 40% medium, 30% hard)
+   
+   Prompt Template: backend/src/prompts.py → FOLLOW_UP_PROMPT_TEMPLATE
+   
+   LLM generates:
+   - Feedback on current answer
+   - Next question (adaptive difficulty)
+   - Emotional tone (empathetic, encouraging)
+   
+   Output: {
+     full_text: "AI response",
+     difficulty: "Easy/Medium/Hard",
+     phase: "qa/summary"
+   }
+   
+   STEP 6: Update Session State
+   - Add user answer to history
+   - Add AI response to history
+   - Store analysis metrics
+   - Update question count
+   - Track elapsed time
+   
+   STEP 7: Return Response with Real-time Feedback
+   Returns: {
+     user_text, full_text, difficulty, phase,
+     elapsed_seconds, interview_complete,
+     real_time_feedback: {
+       pace_wpm, confidence_score, filler_count,
+       issues[], tips[]
+     }
+   }
+
+9. BACKEND: TEXT-TO-SPEECH CONVERSION
+   File: backend/src/edge_tts_client.py → generate_audio_memory_sync()
+   
+   Process:
+   - Uses Microsoft Edge TTS (free, high-quality neural voices)
+   - Voice: "en-US-AriaNeural" (female) or "en-US-GuyNeural" (male)
+   - Generates audio in-memory (faster than file-based)
+   - Returns audio as bytes
+   - Converts to base64 for JSON transmission
+   
+   Output: audio_base64
+
+10. FRONTEND: PLAY AI RESPONSE
+    JavaScript: playResponse(audioData, text)
+    
+    Process:
+    a) Update status: "Interviewer Speaking..."
+    b) Animate visualizer circles (pulse effect)
+    c) Decode base64 audio
+    d) Create Audio element and play
+    e) When audio ends:
+       - Status: "Listening..."
+       - Stop visualizer animation
+       - Wait 500ms buffer
+       - Restart recording for next answer
+
+11. INTERVIEW LOOP CONTINUES
+    - Steps 6-10 repeat for each question-answer pair
+    - Interview runs for 15 minutes (Q&A phase)
+    - Real-time feedback displayed to user
+    - Timer counts down
+
+12. PERFORMANCE SUMMARY PHASE (After 15 minutes)
+    File: backend/src/interview_engine.py → generate_performance_summary()
+    
+    Process:
+    a) Retrieve full interview transcript
+    b) Aggregate all analysis metrics
+    c) Calculate average scores:
+       - Overall confidence
+       - Average pace
+       - Filler word frequency
+       - Answer quality
+    
+    d) Generate comprehensive summary using LLM
+       Prompt: backend/src/prompts.py → PERFORMANCE_SUMMARY_PROMPT
+       
+       Includes:
+       - Strengths (what went well)
+       - Weaknesses (areas to improve)
+       - Specific examples from answers
+       - Actionable improvement tips
+       - Overall performance rating
+    
+    e) AI delivers 5-minute verbal summary
+    f) Set interview_complete = true
+
+13. INTERVIEW COMPLETION
+    JavaScript: Detects interview_complete flag
+    
+    Process:
+    a) Stop recording
+    b) Show "Interview Complete" message
+    c) Call /final_results endpoint
+
+14. BACKEND: FINAL RESULTS CALCULATION
+    Endpoint: POST /final_results
+    File: backend/app/app.py → final_results()
+    
+    Process:
+    a) Retrieve full session data
+    b) Calculate average local scores
+    c) Get semantic analysis from LLM
+       File: backend/src/scoring.py → get_semantic_score()
+       
+       LLM evaluates:
+       - Technical depth (for technical interviews)
+       - Communication skills
+       - Problem-solving approach
+       - Cultural fit (for HR interviews)
+       - Behavioral competencies
+    
+    d) Combine scores (weighted average)
+       File: backend/src/scoring.py → calculate_final_score()
+       - 55% LLM semantic score
+       - 45% Local deterministic score
+    
+    e) Generate final report:
+       {
+         final_score: 0-10,
+         gemini_score: 0-10,
+         local_score: 0-10,
+         subscores: {technical, communication, problem_solving},
+         strengths: [],
+         weaknesses: [],
+         improvement_plan: [],
+         summary: "Overall assessment"
+       }
+    
+    f) Save to session
+    g) Return results
+
+15. RESULTS PAGE (/result)
+    File: frontend/src/result.html
+    URL: /result?session_id={id}
+    
+    Displays:
+    - Overall score (animated circular progress)
+    - Score breakdown (subscores with bar charts)
+    - Strengths list (with icons)
+    - Weaknesses list (with icons)
+    - Improvement plan (actionable steps)
+    - Detailed summary
+    - Download report option (PDF)
+
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                FEATURE 2: ATS RESUME ANALYZER                            │
+└──────────────────────────────────────────────────────────────────────────┘
+
+FLOW OVERVIEW:
+--------------
+User → Upload Resume → AI Analysis → ATS Dashboard → Detailed Feedback
+
+DETAILED STEP-BY-STEP FLOW:
+----------------------------
+
+1. USER NAVIGATES TO RESUME ANALYSIS PAGE (/resume_analysis)
+   File: frontend/src/resume_analysis.html
+   
+   Components:
+   - Drag-and-drop file upload area
+   - Supported formats: PDF, TXT
+   - Upload button with loading animation
+
+2. USER UPLOADS RESUME
+   JavaScript: File upload handler
+   
+   Process:
+   a) User selects resume file
+   b) Client-side validation (file type, size)
+   c) FormData created with resume file
+   d) POST request to /api/analyze_resume
+
+3. BACKEND: RESUME ANALYSIS
+   Endpoint: POST /api/analyze_resume
+   File: backend/app/app.py → api_analyze_resume()
+   
+   Process:
+   a) Receive and validate file
+   b) Save file securely (werkzeug.secure_filename)
+   c) Parse resume text
+      File: backend/src/resume_analyzer.py → parse_resume()
+      
+      For PDF:
+      - Uses PyPDF2 to extract text
+      - Handles multi-page documents
+      - Preserves formatting where possible
+      
+      For TXT:
+      - Direct text reading with UTF-8 encoding
+   
+   d) Analyze resume content with AI
+      File: backend/src/resume_analyzer.py → analyze_resume_content()
+      
+      LLM Analysis (Groq API):
+      - Evaluates ATS compatibility
+      - Checks keyword optimization
+      - Analyzes formatting and structure
+      - Identifies skills and experience
+      - Detects gaps and weaknesses
+      
+      Scoring Factors:
+      - Skills relevance (0-100)
+      - Keyword density (0-100)
+      - Formatting quality (0-100)
+      - Impact statements (0-100)
+      - ATS compatibility (0-100)
+      
+      Output: {
+        overall_score: 0-100,
+        factor_scores: {
+          skills, keywords, formatting, impact
+        },
+        strengths: [],
+        weaknesses: [],
+        career_roadmap: [],
+        detailed_feedback: ""
+      }
+   
+   e) Return analysis results
+
+4. FRONTEND: STORE RESULTS & REDIRECT
+   JavaScript: Resume analysis handler
+   
+   Process:
+   a) Receive analysis data from backend
+   b) Store in sessionStorage:
+      - ats_analysis_data (JSON)
+      - resume_text (original text)
+   c) Redirect to /ats_dashboard
+
+5. ATS DASHBOARD PAGE (/ats_dashboard)
+   File: frontend/src/ats_dashboard.html
+   JavaScript: frontend/public/js/ats_dashboard.js
+   
+   Components:
+   - Overall ATS Score (animated circular gauge)
+   - Score tier badge (Excellent/Good/Needs Improvement)
+   - Factor scores (animated progress bars)
+   - Strengths list (with checkmarks)
+   - Improvements list (with warning icons)
+   - Recommendations list (career roadmap)
+   - "Recreate with AI" button
+
+6. DASHBOARD POPULATION
+   JavaScript: populateDashboard(data)
+   
+   Animations:
+   a) Overall score animates from 0 to target (2-second duration)
+   b) Circular progress bar fills smoothly
+   c) Score tier badge appears with color:
+      - Green (≥80): Excellent
+      - Yellow (60-79): Good
+      - Red (<60): Needs Improvement
+   
+   d) Factor scores animate sequentially:
+      - Keywords score
+      - Skills score
+      - Format score
+      - Impact score
+      Each with color-coded progress bar
+   
+   e) Lists populate with staggered fade-in (100ms delay each)
+
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│            FEATURE 3: AI-POWERED RESUME RECREATION                       │
+└──────────────────────────────────────────────────────────────────────────┘
+
+FLOW OVERVIEW:
+--------------
+ATS Dashboard → Click "Recreate with AI" → AI Optimization → Preview 
+→ Download (PDF/Markdown)
+
+DETAILED STEP-BY-STEP FLOW:
+----------------------------
+
+1. USER CLICKS "RECREATE WITH AI" BUTTON
+   File: frontend/src/ats_dashboard.html
+   JavaScript: recreateResumeWithAI()
+   
+   Process:
+   a) Button shows loading state:
+      - Spinner animation
+      - Text: "AI is recreating your resume..."
+      - Button disabled
+   
+   b) Prepare request data:
+      - resume_text (original)
+      - current_score (ATS score)
+      - analysis (full analysis data)
+   
+   c) POST to /api/recreate_resume
+
+2. BACKEND: AI RESUME RECREATION
+   Endpoint: POST /api/recreate_resume
+   File: backend/app/app.py → api_recreate_resume()
+   
+   Process:
+   a) Validate request data
+   b) Call recreation function
+      File: backend/src/resume_recreator.py → recreate_resume_with_ai()
+      
+      LLM Prompt Engineering:
+      - Instruction: "Optimize this resume for ATS systems"
+      - Context: Current score, weaknesses, strengths
+      - Requirements:
+        * Preserve all factual information
+        * Add relevant keywords
+        * Improve formatting for ATS parsing
+        * Use action verbs and impact statements
+        * Quantify achievements where possible
+        * Follow industry best practices
+        * Output in clean Markdown format
+      
+      Prompt Template: backend/src/prompts.py → RESUME_RECREATION_PROMPT
+      
+      LLM generates:
+      - Optimized resume in Markdown
+      - Structured sections (Contact, Summary, Experience, Skills, Education)
+      - ATS-friendly formatting
+      - Keyword-rich content
+      
+      Post-processing:
+      - Estimate new ATS score (typically +10-20 points)
+      - Validate Markdown syntax
+      - Ensure all original information preserved
+      
+      Output: {
+        resume_markdown: "# Optimized Resume\n\n...",
+        old_score: 65,
+        new_score: 85,
+        improvements: []
+      }
+   
+   c) Return recreated resume data
+
+3. FRONTEND: DISPLAY RECREATED RESUME
+   JavaScript: displayRecreatedResume(result)
+   
+   Process:
+   a) Show recreated section (previously hidden)
+   b) Update score comparison:
+      - Old score: 65
+      - New score: 85
+      - Improvement badge: "+20%" (green)
+   
+   c) Render resume in two formats:
+      - Preview tab: HTML-rendered Markdown (using marked.js)
+      - Markdown tab: Raw Markdown text
+   
+   d) Enable download buttons
+   e) Smooth scroll to recreated section
+   f) Store data in window.recreatedResumeData
+
+4. USER PREVIEWS RESUME
+   Components:
+   - Format tabs (Preview / Markdown)
+   - Preview shows styled HTML version
+   - Markdown shows raw text for editing
+   - Copy to clipboard button
+
+5. USER DOWNLOADS RESUME
+   JavaScript: downloadResume(format)
+   
+   OPTION A: MARKDOWN DOWNLOAD
+   Process:
+   a) Create Blob from markdown text
+   b) Generate download URL
+   c) Trigger download: optimized_resume.md
+   d) Clean up URL
+   
+   OPTION B: PDF DOWNLOAD
+   Process:
+   a) Button shows: "⏳ Generating PDF..."
+   b) POST to /api/download_resume_pdf
+      Body: {markdown_text}
+   
+   c) Backend PDF generation
+      Endpoint: POST /api/download_resume_pdf
+      File: backend/app/app.py → api_download_resume_pdf()
+      
+      Primary Method:
+      File: backend/src/pdf_generator.py → markdown_to_pdf()
+      
+      Process:
+      - Parse Markdown to structured data
+      - Create PDF using ReportLab
+      - Custom styling:
+        * Professional fonts (Helvetica, Times)
+        * Proper spacing and margins
+        * Section headers (bold, larger font)
+        * Bullet points for lists
+        * Page breaks where needed
+      - Return PDF as bytes
+      
+      Fallback Methods (if primary fails):
+      1. Simple PDF (basic text rendering)
+      2. Emergency PDF (ultra-minimal, guaranteed to work)
+      
+      Error Handling:
+      - Try fancy PDF first
+      - If fails, try simple PDF
+      - If fails, try emergency PDF
+      - If all fail, return error
+   
+   d) Frontend receives PDF blob
+   e) Create download URL
+   f) Trigger download: optimized_resume.pdf
+   g) Button returns to normal state
+
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                    SUPPORTING SYSTEMS & MODULES                          │
+└──────────────────────────────────────────────────────────────────────────┘
+
+1. MEMORY STORE (Session Management)
+   File: backend/src/memory_store.py
+   
+   Purpose: In-memory database for interview sessions
+   
+   Data Structure:
+   {
+     session_id: {
+       mode: "Technical",
+       job_role: "Software Engineer",
+       company: "Google",
+       history: [
+         {role: "ai", content: "Hello...", timestamp: "..."},
+         {role: "user", content: "I am...", timestamp: "..."}
+       ],
+       scores: [
+         {local_score: 7.5, analysis: {...}}
+       ],
+       resume_context: {...},
+       start_time: datetime,
+       final_result: {...}
+     }
+   }
+   
+   Functions:
+   - create_session(session_id)
+   - get_session(session_id)
+   - update_session(session_id, key, value)
+   - add_history(session_id, role, content)
+   - delete_session(session_id)
+
+2. PROMPT ENGINEERING
+   File: backend/src/prompts.py
+   
+   Contains:
+   - SYSTEM_INSTRUCTION: Base AI interviewer personality
+   - FOLLOW_UP_PROMPT_TEMPLATE: Question generation template
+   - PERFORMANCE_SUMMARY_PROMPT: Summary generation template
+   - SCORING_PROMPT_TEMPLATE: Final evaluation template
+   - RESUME_RECREATION_PROMPT: Resume optimization template
+   
+   Key Characteristics:
+   - Empathetic and encouraging tone
+   - Adaptive difficulty based on performance
+   - Human-like conversation flow
+   - Contextual awareness (job role, company)
+   - STAR method encouragement
+   - Real-time feedback integration
+
+3. QUESTION PACKS
+   File: backend/src/question_packs.py
+   
+   Contains:
+   - JOB_ROLE_QUESTIONS: Questions by role and difficulty
+     * Software Engineer (Easy/Medium/Hard)
+     * Data Scientist (Easy/Medium/Hard)
+     * Product Manager (Easy/Medium/Hard)
+     * etc.
+   
+   - COMPANY_STYLES: Interview style guides
+     * Google: Focus on problem-solving, scalability
+     * Amazon: Leadership principles, customer obsession
+     * Microsoft: Collaboration, growth mindset
+     * Startup: Adaptability, ownership
+   
+   Usage:
+   - LLM uses these as reference for question generation
+   - Ensures relevance to job role and company
+   - Maintains difficulty distribution (30/40/30)
+
+4. GROQ API CLIENT
+   File: backend/src/grok_client.py
+   
+   Purpose: Wrapper for Groq LLM API
+   
+   Functions:
+   - generate_response(prompt): Returns JSON response
+   - generate_text_response(prompt): Returns plain text
+   - generate_resume_analysis(prompt): Specialized for resumes
+   
+   Configuration:
+   - Model: llama-3.3-70b-versatile
+   - Temperature: 0.7 (balanced creativity)
+   - Max tokens: 2000
+   - JSON mode: Enabled for structured output
+   
+   Error Handling:
+   - API key validation
+   - Rate limiting
+   - Timeout handling
+   - Fallback responses
+
+5. EDGE TTS CLIENT
+   File: backend/src/edge_tts_client.py
+   
+   Purpose: Text-to-Speech using Microsoft Edge TTS
+   
+   Functions:
+   - generate_audio_sync(text, output_path): Save to file
+   - generate_audio_memory_sync(text): Return bytes
+   
+   Configuration:
+   - Voice: en-US-AriaNeural (default)
+   - Rate: +0% (normal speed)
+   - Volume: +0% (normal volume)
+   - Pitch: +0Hz (normal pitch)
+   
+   Advantages:
+   - Free (no API key required)
+   - High-quality neural voices
+   - Fast generation
+   - Multiple language support
+
+6. WHISPER STT (Backup)
+   File: backend/src/whisper_stt.py
+   
+   Purpose: Local Speech-to-Text using OpenAI Whisper
+   
+   Note: Currently using browser Web Speech API for STT
+   Whisper is available as backup for:
+   - Offline processing
+   - Higher accuracy
+   - Multi-language support
+   
+   Model: whisper-base (balanced speed/accuracy)
+
+7. SPACY PARSER
+   File: backend/src/spacy_parser.py
+   
+   Purpose: NLP parsing for resumes
+   
+   Functions:
+   - parse_resume(text): Extract entities
+   
+   Extracts:
+   - Skills (keyword matching)
+   - Organizations (NER)
+   - Education (pattern matching)
+   - Experience (section detection)
+   
+   Model: en_core_web_sm
+
+8. UTILITIES
+   File: backend/src/utils.py
+   
+   Functions:
+   - generate_session_id(): UUID generation
+   - ensure_directory(path): Create folders
+   - get_timestamp(): Formatted timestamp
+   - logger: Centralized logging
+
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                        INTERVIEW TIMING SYSTEM                           │
+└──────────────────────────────────────────────────────────────────────────┘
+
+TOTAL DURATION: 20 MINUTES
+--------------------------
+
+PHASE 1: Q&A PHASE (15 minutes)
+- AI asks questions
+- Candidate responds
+- Real-time analysis and feedback
+- Adaptive difficulty
+- Question count: ~8-12 questions (depends on answer length)
+
+PHASE 2: PERFORMANCE SUMMARY (5 minutes)
+- AI generates comprehensive summary
+- Reviews strengths and weaknesses
+- Provides specific examples
+- Offers improvement tips
+- Delivers verbal feedback
+
+TIMER IMPLEMENTATION:
+- Start time recorded at session creation
+- Elapsed time calculated on each answer
+- Phase transition at 15-minute mark
+- Visual timer displayed to candidate
+- Automatic phase switching
+
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                    REAL-TIME FEEDBACK SYSTEM                             │
+└──────────────────────────────────────────────────────────────────────────┘
+
+ANALYSIS DIMENSIONS:
+--------------------
+
+1. SPEAKING PACE
+   - Measured in Words Per Minute (WPM)
+   - Ideal range: 120-160 WPM
+   - Too slow: < 100 WPM → "Speak a bit faster"
+   - Too fast: > 180 WPM → "Slow down for clarity"
+   - Real-time calculation from transcript and duration
+
+2. CONFIDENCE SCORE (0-100)
+   Factors:
+   - Filler word frequency (lower is better)
+   - Pace consistency
+   - Sentence structure
+   - Answer length (too short = less confident)
+   
+   Categories:
+   - High (80-100): "Very confident delivery"
+   - Medium (60-79): "Moderately confident"
+   - Low (0-59): "Work on confidence"
+
+3. FILLER WORDS
+   Detected: um, uh, like, you know, actually, basically, 
+             literally, sort of, kind of
+   
+   Feedback:
+   - Count displayed
+   - Percentage of total words
+   - Tip: "Reduce filler words by pausing instead"
+
+4. CONTENT QUALITY
+   Checks:
+   - Rambling (too long, repetitive)
+   - Relevance (addresses the question?)
+   - Structure (STAR method)
+   - Clarity and coherence
+   
+   LLM-powered analysis for semantic understanding
+
+5. SCRIPT READING DETECTION
+   Indicators:
+   - Overly formal language
+   - Perfect grammar (unnatural for speech)
+   - Lack of conversational markers
+   - Monotonous structure
+   
+   Feedback: "Try to sound more natural and conversational"
+
+FEEDBACK DELIVERY:
+------------------
+- Real-time metrics stored per answer
+- Displayed in interview interface
+- AI incorporates feedback into next question
+- Cumulative analysis for final report
+
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                        ADAPTIVE DIFFICULTY                               │
+└──────────────────────────────────────────────────────────────────────────┘
+
+DIFFICULTY DISTRIBUTION:
+------------------------
+- 30% Easy questions
+- 40% Medium questions
+- 30% Hard questions
+
+ADAPTIVE LOGIC:
+---------------
+- If candidate struggles (low confidence, poor content):
+  → Next question is easier
+  → More guidance provided
+  → Encouraging tone
+
+- If candidate excels (high confidence, strong content):
+  → Next question is harder
+  → Deeper technical dive
+  → Challenge their knowledge
+
+- Maintains overall distribution across interview
+- Ensures fair evaluation
+- Mimics human interviewer behavior
+
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                    VOICE INTERACTION SYSTEM                              │
+└──────────────────────────────────────────────────────────────────────────┘
+
+VOICE ACTIVITY DETECTION (VAD):
+--------------------------------
+- Uses Web Audio API
+- Analyzes audio frequency data (FFT)
+- Calculates RMS (Root Mean Square) volume
+- Threshold: 0.01 (configurable)
+- Updates visualizer in real-time
+
+SPEECH RECOGNITION:
+-------------------
+- Primary: Browser Web Speech API
+  * Continuous listening
+  * Interim results for real-time feedback
+  * Automatic silence detection
+  * Language: en-US
+
+- Backup: Whisper STT (local)
+  * Higher accuracy
+  * Offline capability
+  * Multi-language support
+
+SILENCE DETECTION:
+------------------
+- Waits 1.5 seconds of silence after speech
+- Additional 800ms buffer for safety
+- Prevents interrupting mid-sentence
+- Ensures complete thought capture
+
+TURN-TAKING LOGIC:
+------------------
+1. AI speaks → User listens
+2. AI finishes → 500ms delay
+3. Start listening for user
+4. User speaks → Real-time transcription
+5. User pauses → Silence timer starts
+6. 1.5s silence → Stop recording
+7. Process answer → Generate AI response
+8. AI speaks → Cycle repeats
+
+BARGE-IN PREVENTION:
+--------------------
+- isProcessing flag prevents overlapping
+- Current audio stopped if user interrupts
+- Recognition restarted after AI finishes
+- Error handling for recognition failures
+
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                        ERROR HANDLING                                    │
+└──────────────────────────────────────────────────────────────────────────┘
+
+FRONTEND ERRORS:
+----------------
+1. Microphone Access Denied
+   - Alert user: "Microphone access required"
+   - Provide instructions to enable
+
+2. Speech Recognition Errors
+   - no-speech: Restart listening after 500ms
+   - aborted: Normal stop, don't restart
+   - Other errors: Retry after 1 second
+
+3. Network Errors
+   - Display: "Error occurred"
+   - Log error details
+   - Allow manual retry
+
+4. Audio Playback Errors
+   - Fallback: Continue without audio
+   - Display text response
+   - Log error for debugging
+
+BACKEND ERRORS:
+---------------
+1. API Key Missing
+   - Return error message
+   - Fallback response to user
+   - Log warning
+
+2. LLM API Errors
+   - Retry with exponential backoff
+   - Fallback to simpler prompt
+   - Return generic response if all fails
+
+3. File Upload Errors
+   - Validate file type and size
+   - Return clear error message
+   - Suggest alternative formats
+
+4. PDF Generation Errors
+   - Try fancy PDF first
+   - Fallback to simple PDF
+   - Emergency minimal PDF as last resort
+   - Return error only if all methods fail
+
+5. Session Not Found
+   - Return 404 error
+   - Redirect to dashboard
+   - Clear invalid session data
+
+LOGGING:
+--------
+- All errors logged with stack traces
+- Info logs for major operations
+- Debug logs for development
+- Centralized logger in utils.py
+
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                        SECURITY & PRIVACY                                │
+└──────────────────────────────────────────────────────────────────────────┘
+
+DATA HANDLING:
+--------------
+- Session data stored in-memory (not persisted)
+- Resumes stored temporarily, can be deleted
+- No permanent storage of interview recordings
+- Audio files cleaned up after session
+
+FILE UPLOAD SECURITY:
+---------------------
+- werkzeug.secure_filename() for safe filenames
+- File type validation (PDF, TXT only)
+- File size limits
+- Stored in dedicated upload folder
+
+API SECURITY:
+-------------
+- CORS enabled for frontend access
+- API key stored in .env file
+- Environment variables for sensitive data
+- No API keys in frontend code
+
+SESSION MANAGEMENT:
+-------------------
+- UUID-based session IDs (unpredictable)
+- Session timeout (can be implemented)
+- No session hijacking risk (in-memory)
+
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                    PERFORMANCE OPTIMIZATIONS                             │
+└──────────────────────────────────────────────────────────────────────────┘
+
+FRONTEND:
+---------
+- Lazy loading of audio files
+- Efficient DOM updates
+- Debounced event handlers
+- Optimized animations (CSS transforms)
+- Minimal JavaScript bundle
+
+BACKEND:
+--------
+- In-memory TTS (faster than file-based)
+- Base64 audio encoding for JSON transmission
+- Efficient session storage (in-memory)
+- Async audio generation where possible
+- Caching of LLM responses (can be added)
+
+LLM OPTIMIZATION:
+-----------------
+- Concise prompts to reduce tokens
+- JSON mode for structured output
+- Temperature tuning for consistency
+- Max tokens limit to prevent overuse
+
+AUDIO PROCESSING:
+-----------------
+- Browser-based STT (no server load)
+- Edge TTS (free, fast, no API calls)
+- In-memory audio generation
+- Compressed audio formats (MP3)
+
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                        FUTURE ENHANCEMENTS                               │
+└──────────────────────────────────────────────────────────────────────────┘
+
+POTENTIAL IMPROVEMENTS:
+-----------------------
+1. Multi-language support (Hindi, Marathi, etc.)
+2. Video interview with facial expression analysis
+3. Persistent storage (database) for interview history
+4. User accounts and authentication
+5. Interview replay and review
+6. Comparison with other candidates
+7. Industry-specific interview modes
+8. Mock interview scheduling
+9. Integration with job boards
+10. Mobile app version
+11. Interview coaching mode
+12. Team interview simulation
+13. Whiteboard coding integration
+14. Live interview with human + AI
+15. Interview analytics dashboard
+
+TECHNICAL IMPROVEMENTS:
+-----------------------
+1. WebSocket for real-time communication
+2. Redis for session storage (scalability)
+3. PostgreSQL for persistent data
+4. Docker containerization
+5. Kubernetes deployment
+6. Load balancing for multiple users
+7. CDN for static assets
+8. Caching layer (Redis)
+9. Rate limiting per user
+10. Advanced error monitoring (Sentry)
+
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                        DEPLOYMENT ARCHITECTURE                           │
+└──────────────────────────────────────────────────────────────────────────┘
+
+CURRENT SETUP (Development):
+-----------------------------
+- Flask development server
+- Port: 5000
+- Debug mode: Enabled
+- Single-threaded
+- Local file storage
+
+PRODUCTION RECOMMENDATIONS:
+---------------------------
+1. Web Server: Gunicorn or uWSGI
+2. Reverse Proxy: Nginx
+3. HTTPS: Let's Encrypt SSL
+4. Process Manager: Supervisor or systemd
+5. Hosting: AWS, GCP, Azure, or DigitalOcean
+6. Storage: S3 or Cloud Storage for files
+7. Database: PostgreSQL or MongoDB
+8. Caching: Redis
+9. Monitoring: Prometheus + Grafana
+10. Logging: ELK Stack or CloudWatch
+
+SCALABILITY:
+------------
+- Horizontal scaling with load balancer
+- Separate services for TTS, STT, LLM
+- Microservices architecture
+- Queue system for async tasks (Celery)
+- CDN for global distribution
+
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                        CONFIGURATION FILES                               │
+└──────────────────────────────────────────────────────────────────────────┘
+
+.env FILE:
+----------
+GROQ_API_KEY=your_groq_api_key_here
+
+requirements.txt:
+-----------------
+Flask==3.0.0
+flask-cors==4.0.0
+python-dotenv==1.0.0
+groq==0.4.0
+edge-tts==6.1.9
+openai-whisper==20231117
+spacy==3.7.2
+PyPDF2==3.0.1
+reportlab==4.0.7
+werkzeug==3.0.1
+
+DIRECTORY STRUCTURE:
+--------------------
+sampro-ai-interview/
+├── backend/
+│   ├── app/
+│   │   └── app.py (Flask application)
+│   └── src/
+│       ├── audio_analyzer.py
+│       ├── edge_tts_client.py
+│       ├── grok_client.py
+│       ├── interview_engine.py
+│       ├── memory_store.py
+│       ├── mistake_detector.py
+│       ├── pdf_generator.py
+│       ├── prompts.py
+│       ├── question_packs.py
+│       ├── resume_analyzer.py
+│       ├── resume_recreator.py
+│       ├── scoring.py
+│       ├── spacy_parser.py
+│       ├── utils.py
+│       └── whisper_stt.py
+├── frontend/
+│   ├── public/
+│   │   ├── css/
+│   │   │   └── style.css
+│   │   ├── js/
+│   │   │   ├── script.js
+│   │   │   ├── ats_dashboard.js
+│   │   │   ├── animations.js
+│   │   │   └── about.js
+│   │   ├── audio/ (generated)
+│   │   └── uploads/ (generated)
+│   └── src/
+│       ├── index.html
+│       ├── dashboard.html
+│       ├── interview.html
+│       ├── result.html
+│       ├── resume_analysis.html
+│       ├── ats_dashboard.html
+│       ├── features.html
+│       ├── pricing.html
+│       ├── about.html
+│       └── resources.html
+├── configs/
+│   └── requirements.txt
+├── scripts/
+│   ├── verify_system.py
+│   ├── test_system.py
+│   └── test_pdf.py
+├── .env
+├── .gitignore
+└── PROJECT_DOCUMENTATION.md
+
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                        RUNNING THE PROJECT                               │
+└──────────────────────────────────────────────────────────────────────────┘
+
+SETUP INSTRUCTIONS:
+-------------------
+1. Clone the repository
+2. Create virtual environment:
+   python -m venv venv
+   
+3. Activate virtual environment:
+   Windows: venv\Scripts\activate
+   Linux/Mac: source venv/bin/activate
+   
+4. Install dependencies:
+   pip install -r configs/requirements.txt
+   
+5. Create .env file with GROQ_API_KEY
+   
+6. Run the application:
+   cd backend/app
+   python app.py
+   
+7. Open browser:
+   http://localhost:5000
+
+TESTING:
+--------
+1. Test system components:
+   python scripts/verify_system.py
+   
+2. Test interview flow:
+   python backend/src/test_interview.py
+   
+3. Test PDF generation:
+   python scripts/test_pdf.py
+
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                        API ENDPOINTS SUMMARY                             │
+└──────────────────────────────────────────────────────────────────────────┘
+
+STATIC PAGES:
+-------------
+GET  /                    → Homepage
+GET  /dashboard           → Interview dashboard
+GET  /interview           → Interview page
+GET  /result              → Results page
+GET  /resume_analysis     → Resume upload page
+GET  /ats_dashboard       → ATS analysis dashboard
+GET  /features            → Features page
+GET  /pricing             → Pricing page
+GET  /about               → About page
+GET  /resources           → Resources page
+
+INTERVIEW API:
+--------------
+POST /start_call_interview
+     Input: {mode, job_role, company}
+     Output: {session_id, message, audio_url}
+
+POST /process_voice
+     Input: {session_id, user_text} or FormData with audio
+     Output: {user_text, full_text, audio_base64, difficulty, 
+              phase, elapsed_seconds, interview_complete, 
+              real_time_feedback}
+
+POST /upload_profile
+     Input: FormData with resume file
+     Output: {parsed resume data}
+
+POST /final_results
+     Input: {session_id}
+     Output: {final_score, subscores, strengths, weaknesses, 
+              improvement_plan, summary}
+
+RESUME ANALYSIS API:
+--------------------
+POST /api/analyze_resume
+     Input: FormData with resume file
+     Output: {overall_score, factor_scores, strengths, 
+              weaknesses, career_roadmap, detailed_feedback}
+
+POST /api/recreate_resume
+     Input: {resume_text, current_score, analysis}
+     Output: {resume_markdown, old_score, new_score, improvements}
+
+POST /api/download_resume_pdf
+     Input: {markdown_text}
+     Output: PDF file (binary)
+
+STATIC FILES:
+-------------
+GET  /audio/<filename>    → Serve audio files
+GET  /static/<filename>   → Serve static assets
+
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                        KEY TECHNOLOGIES EXPLAINED                        │
+└──────────────────────────────────────────────────────────────────────────┘
+
+1. GROQ API (LLM):
+   - Fast inference (< 1 second response)
+   - Model: llama-3.3-70b-versatile
+   - JSON mode for structured output
+   - Cost-effective compared to OpenAI
+
+2. EDGE TTS:
+   - Microsoft's neural TTS
+   - Free (no API key)
+   - 100+ voices in 40+ languages
+   - High quality, natural-sounding
+
+3. WEB SPEECH API:
+   - Browser-native STT
+   - No server processing needed
+   - Real-time transcription
+   - Supports multiple languages
+
+4. WEB AUDIO API:
+   - Audio visualization
+   - Voice activity detection
+   - Real-time frequency analysis
+   - Low latency
+
+5. FLASK:
+   - Lightweight Python web framework
+   - Easy to learn and use
+   - Flexible routing
+   - Jinja2 templating
+
+6. REPORTLAB:
+   - PDF generation in Python
+   - Programmatic layout control
+   - Custom styling
+   - Multi-page support
+
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                        CONCLUSION                                        │
+└──────────────────────────────────────────────────────────────────────────┘
+
+This project is a comprehensive AI-powered interview platform that combines:
+- Real-time voice interaction
+- Advanced audio analysis
+- Adaptive questioning
+- Emotional intelligence
+- Resume optimization
+- Professional feedback
+
+The system is designed to mimic human interviewers while providing objective,
+data-driven insights. It helps candidates prepare for real interviews by
+offering a realistic, low-pressure practice environment.
+
+Key Strengths:
+- End-to-end voice interview experience
+- Real-time feedback and analysis
+- AI-powered resume optimization
+- Premium, modern UI/UX
+- Scalable architecture
+- Free TTS (no API costs)
+- Fast LLM inference (Groq)
+
+The project demonstrates best practices in:
+- Full-stack web development
+- AI/ML integration
+- Real-time audio processing
+- User experience design
+- Error handling and resilience
+
+================================================================================
+                        END OF DOCUMENTATION
+================================================================================

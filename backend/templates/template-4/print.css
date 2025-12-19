@@ -1,0 +1,19 @@
+@media print {
+    @page {
+        margin: 0;
+        size: A4;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .resume-container {
+        grid-template-columns: 240px 1fr !important;
+    }
+
+    .no-break {
+        break-inside: avoid;
+    }
+}

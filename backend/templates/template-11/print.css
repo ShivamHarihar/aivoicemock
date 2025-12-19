@@ -1,0 +1,33 @@
+@media print {
+    @page {
+        margin: 0;
+        size: A4;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-size: 10pt;
+    }
+
+    .resume-container {
+        grid-template-columns: 35% 65% !important; /* Keep two columns */
+        width: 210mm !important;
+        min-height: 297mm !important; 
+        margin: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .sidebar {
+        background-color: #E6EDE9 !important; /* Keep light green sidebar color */
+        padding: 20px !important;
+    }
+
+    .main-content {
+        padding: 20px !important;
+    }
+
+    .no-break {
+        break-inside: avoid;
+    }
+}

@@ -1,0 +1,26 @@
+# Web Framework
+flask
+flask-cors
+werkzeug
+
+# API & HTTP
+requests
+
+# AI & ML
+groq
+
+# Audio Processing
+edge-tts
+soundfile
+numpy
+scipy
+
+# PDF & Document Processing
+pypdf
+reportlab
+weasyprint
+markdown2
+python-docx
+
+# Environment & Configuration
+python-dotenv

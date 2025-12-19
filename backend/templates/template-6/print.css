@@ -1,0 +1,32 @@
+@media print {
+    @page {
+        margin: 0;
+        size: A4;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-size: 11pt; /* Adjust font size for better print layout */
+    }
+
+    .resume-container {
+        /* Single column layout for print */
+        display: block !important; 
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 3rem; /* Add horizontal padding for content */
+    }
+
+    .resume-header {
+        margin-bottom: 20px !important;
+    }
+
+    .section-title {
+        margin-top: 15px !important;
+    }
+
+    .no-break {
+        break-inside: avoid;
+    }
+}

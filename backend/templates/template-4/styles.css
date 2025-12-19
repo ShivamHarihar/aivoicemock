@@ -1,0 +1,73 @@
+/* Template 4: Heavy left, narrow content column */
+/* Reference: Screenshot 104509.png */
+
+@import url('../css/base_styles.css');
+
+body.template-4 {
+    font-family: 'Trebuchet MS', sans-serif;
+}
+
+.resume-container[data-template="template-4"] {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    /* A4 Dimensions */
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    background: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Sidebar */
+.resume-container[data-template="template-4"] .resume-header,
+.resume-container[data-template="template-4"] .section-contact,
+.resume-container[data-template="template-4"] .section-skills,
+.resume-container[data-template="template-4"] .section-education {
+    grid-column: 1;
+    background-color: #004d40;
+    color: #e0f2f1;
+    padding: 2rem;
+}
+
+.resume-container[data-template="template-4"] .resume-header h1 {
+    color: #fff;
+    font-size: 28px;
+    margin-bottom: 2rem;
+    line-height: 1.1;
+}
+
+.resume-container[data-template="template-4"] .section-contact h2,
+.resume-container[data-template="template-4"] .section-skills h2,
+.resume-container[data-template="template-4"] .section-education h2 {
+    color: #80cbc4;
+    font-size: 14px;
+    text-transform: uppercase;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Main Content */
+.resume-container[data-template="template-4"] .section-summary,
+.resume-container[data-template="template-4"] .section-experience,
+.resume-container[data-template="template-4"] .section-projects {
+    grid-column: 2;
+    padding: 3rem;
+    background: #fff;
+}
+
+.resume-container[data-template="template-4"] .section-experience h2,
+.resume-container[data-template="template-4"] .section-summary h2 {
+    color: #004d40;
+    font-size: 24px;
+    margin-bottom: 1.5rem;
+    border-left: 5px solid #004d40;
+    padding-left: 1rem;
+}
+
+/* Timeline items */
+.resume-container[data-template="template-4"] h3 {
+    color: #000;
+    font-size: 18px;
+    margin-top: 1.5rem;
+}

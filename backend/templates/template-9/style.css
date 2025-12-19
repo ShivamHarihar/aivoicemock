@@ -1,0 +1,210 @@
+/* Template 4: Brian T. Wayne (Minimalist, Two-Column Dark Sidebar with Photo) */
+/* Reference: Screenshot 2025-12-12 164107.png */
+
+/* This template is a modification of Template 3, adding the photo and adjusting layout */
+@import url('../css/base_styles.css');
+
+body.template-9 {
+    font-family: 'Georgia', 'Times New Roman', Times, serif;
+    color: #333;
+    background: #f4f4f4;
+    font-size: 11pt;
+    line-height: 1.5;
+}
+
+.resume-container[data-template="template-9"] {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    /* Two-column layout */
+    /* A4 Dimensions */
+    width: 210mm;
+    min-height: 297mm;
+    margin: 30px auto;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Sidebar (Left Column) */
+.resume-container[data-template="template-9"] .sidebar {
+    background-color: #38424a;
+    /* Dark Slate Gray */
+    color: #fff;
+    padding: 40px 25px;
+    text-align: center;
+    /* Center content in the sidebar */
+}
+
+.resume-container[data-template="template-9"] .resume-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    margin-bottom: 20px;
+}
+
+.resume-container[data-template="template-9"] .resume-header {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.resume-container[data-template="template-9"] .resume-header h1 {
+    font-size: 20pt;
+    /* Slightly smaller name */
+    font-weight: 500;
+    margin: 0 0 5px 0;
+    line-height: 1.1;
+    color: #fff;
+}
+
+.resume-container[data-template="template-9"] .resume-header .job-title {
+    font-size: 12pt;
+    font-weight: 300;
+    margin: 0;
+    color: #c0c0c0;
+}
+
+/* Sidebar Section Headers */
+.resume-container[data-template="template-9"] .sidebar h2 {
+    font-size: 12pt;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 30px 0 15px 0;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.resume-container[data-template="template-9"] .sidebar h2 i {
+    margin-right: 8px;
+    font-size: 14pt;
+}
+
+/* Contact Info (Modified to be centralized) */
+.resume-container[data-template="template-9"] .section-contact ul {
+    list-style: none;
+    padding: 0;
+    font-size: 10pt;
+    text-align: center;
+}
+
+.resume-container[data-template="template-9"] .section-contact li {
+    margin-bottom: 8px;
+    display: inline-block;
+    /* Display items inline */
+    margin: 0 10px 8px 10px;
+}
+
+.resume-container[data-template="template-9"] .section-contact i {
+    margin-right: 5px;
+    font-size: 12pt;
+    color: #fff;
+}
+
+.resume-container[data-template="template-9"] .section-contact .contact-item {
+    display: flex;
+    align-items: center;
+}
+
+/* Profile Section */
+.resume-container[data-template="template-9"] .section-profile p {
+    font-size: 10pt;
+    line-height: 1.6;
+    color: #e0e0e0;
+    text-align: left;
+    /* Profile text aligned left */
+}
+
+/* Languages (with dots) */
+.resume-container[data-template="template-9"] .section-languages ul {
+    list-style: none;
+    padding: 0;
+    font-size: 10pt;
+    text-align: left;
+}
+
+.resume-container[data-template="template-9"] .section-languages li {
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.resume-container[data-template="template-9"] .skill-dots {
+    display: flex;
+    gap: 3px;
+    margin-top: 5px;
+}
+
+.resume-container[data-template="template-9"] .skill-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #fff;
+    opacity: 0.5;
+}
+
+.resume-container[data-template="template-9"] .skill-dot.filled {
+    opacity: 1;
+}
+
+/* Main Content (Uses the same styling as Template 3) */
+.resume-container[data-template="template-9"] .main-content {
+    padding: 40px 30px 40px 40px;
+    background-color: #fff;
+}
+
+.resume-container[data-template="template-9"] .main-content h2 {
+    font-size: 16pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 15px 0;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #333;
+    color: #333;
+}
+
+.resume-container[data-template="template-9"] .section-experience .item-container {
+    margin-bottom: 20px;
+    position: relative;
+    padding-right: 100px;
+}
+
+.resume-container[data-template="template-9"] .section-experience h3 {
+    font-size: 12pt;
+    font-weight: 700;
+    margin: 0 0 2px 0;
+    color: #333;
+}
+
+.resume-container[data-template="template-9"] .job-details {
+    font-size: 10pt;
+    font-style: italic;
+    font-weight: 400;
+    color: #555;
+    margin: 0;
+}
+
+.resume-container[data-template="template-9"] .item-date {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 10pt;
+    font-weight: 500;
+    color: #555;
+}
+
+.resume-container[data-template="template-9"] ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-top: 5px;
+    font-size: 10pt;
+    line-height: 1.5;
+}
+
+.resume-container[data-template="template-9"] li {
+    margin-bottom: 5px;
+}

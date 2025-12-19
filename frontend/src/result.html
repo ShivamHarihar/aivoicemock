@@ -1,0 +1,1029 @@
+{% extends "base.html" %}
+
+{% block title %}Interview Results | AI Interviewer{% endblock %}
+
+{% block content %}
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<section class="section results-section">
+    <div class="container">
+        <!-- Loading State -->
+        <div id="loading-state" class="loading-container">
+            <div class="spinner-large"></div>
+            <p>Analyzing your performance...</p>
+        </div>
+
+        <!-- Results Container -->
+        <div id="results-container" style="display: none;">
+            <!-- Header -->
+            <div class="page-header fade-up">
+                <h1>Interview <span class="gradient-highlight">Performance Report</span></h1>
+                <p id="interview-meta" class="meta-info"></p>
+            </div>
+
+            <!-- Overall Score Card -->
+            <div class="score-card glass-panel fade-up" style="margin-bottom: 40px;">
+                <div class="score-display">
+                    <div class="score-circle-container">
+                        <svg class="score-circle-svg" viewBox="0 0 200 200">
+                            <defs>
+                                <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#1e6b7b;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#E74C3C;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="score-bg" cx="100" cy="100" r="90"></circle>
+                            <circle class="score-progress" id="score-progress-circle" cx="100" cy="100" r="90"></circle>
+                        </svg>
+                        <div class="score-content">
+                            <span class="score-value" id="overall-score">--</span>
+                            <span class="score-label-small">/ 100</span>
+                        </div>
+                    </div>
+                    <div class="score-info">
+                        <h2>Overall Performance</h2>
+                        <p id="performance-message">Excellent work! Keep it up.</p>
+                        <div class="performance-badge" id="performance-badge">
+                            <span class="badge-icon">🏆</span>
+                            <span class="badge-text">Excellent</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metrics Grid -->
+            <div class="metrics-grid fade-up">
+                <div class="metric-card glass-panel">
+                    <div class="metric-icon">💬</div>
+                    <div class="metric-value" id="metric-questions">--</div>
+                    <div class="metric-label">Questions Answered</div>
+                </div>
+                <div class="metric-card glass-panel">
+                    <div class="metric-icon">⚡</div>
+                    <div class="metric-value" id="metric-confidence">--%</div>
+                    <div class="metric-label">Avg. Confidence</div>
+                </div>
+                <div class="metric-card glass-panel">
+                    <div class="metric-icon">🎯</div>
+                    <div class="metric-value" id="metric-pace">-- WPM</div>
+                    <div class="metric-label">Speaking Pace</div>
+                </div>
+                <div class="metric-card glass-panel">
+                    <div class="metric-icon">⏱️</div>
+                    <div class="metric-value" id="metric-duration">-- min</div>
+                    <div class="metric-label">Interview Duration</div>
+                </div>
+            </div>
+
+            <!-- Performance Analytics Grid - 3 Columns -->
+            <div class="analytics-grid fade-up">
+                <!-- Performance Breakdown Card -->
+                <div class="glass-panel analytics-card">
+                    <div class="card-header-enhanced">
+                        <span class="card-icon">📊</span>
+                        <h3 class="section-title">Performance Breakdown</h3>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="breakdown-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Performance Over Time Chart -->
+                <div class="glass-panel analytics-card">
+                    <div class="card-header-enhanced">
+                        <span class="card-icon">📈</span>
+                        <h3 class="section-title">Performance Over Time</h3>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="performance-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Skills Assessment Chart -->
+                <div class="glass-panel analytics-card">
+                    <div class="card-header-enhanced">
+                        <span class="card-icon">🎯</span>
+                        <h3 class="section-title">Skills Assessment</h3>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="skills-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Removed separate Skills Radar Chart section -->
+
+
+            <!-- Strengths & Improvements -->
+            <div class="feedback-grid fade-up">
+                <div class="glass-panel feedback-col">
+                    <div class="card-header-enhanced">
+                        <span class="card-icon success-icon">✅</span>
+                        <h3 class="feedback-title">Strengths</h3>
+                    </div>
+                    <ul class="feedback-list" id="strengths-list">
+                        <!-- Populated by JS -->
+                    </ul>
+                </div>
+                <div class="glass-panel feedback-col">
+                    <div class="card-header-enhanced">
+                        <span class="card-icon warning-icon">🎯</span>
+                        <h3 class="feedback-title">Areas for Improvement</h3>
+                    </div>
+                    <ul class="feedback-list" id="improvements-list">
+                        <!-- Populated by JS -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="actions fade-up" style="text-align: center; margin-top: 60px;">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Start New Interview</a>
+                <a href="{{ url_for('resources') }}" class="btn btn-outline">View Resources</a>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-state" style="display: none; text-align: center;">
+            <div class="glass-panel" style="padding: 60px;">
+                <h2>⚠️ Unable to Load Results</h2>
+                <p id="error-message" style="color: var(--text-muted); margin: 20px 0;">Session not found or expired.
+                </p>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Go to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Results Section - Match ATS Dashboard Style */
+    .results-section {
+        padding: 100px 0 60px;
+        min-height: 100vh;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(248, 250, 252, 0.8) 100%);
+    }
+
+    /* Page Header - Clean with Medium Spacing */
+    .results-section .page-header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 0;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+    }
+
+    .results-section .page-header h1 {
+        font-size: 3.2rem;
+        font-weight: 900;
+        color: #2C3E50;
+        margin-bottom: 12px;
+        letter-spacing: -1px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .gradient-highlight {
+        background: linear-gradient(135deg, #1e6b7b 0%, #E74C3C 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .meta-info {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        margin-top: 8px;
+    }
+
+    /* Loading State */
+    .loading-container {
+        text-align: center;
+        padding: 100px 20px;
+    }
+
+    .spinner-large {
+        width: 60px;
+        height: 60px;
+        border: 4px solid rgba(30, 107, 123, 0.2);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Glass Panels */
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid rgba(44, 62, 80, 0.08);
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .glass-panel:hover {
+        box-shadow: 0 12px 40px rgba(30, 107, 123, 0.12);
+        transform: translateY(-4px);
+    }
+
+    /* Score Card */
+    .score-card {
+        padding: 50px;
+        text-align: center;
+    }
+
+    .score-display {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 60px;
+        flex-wrap: wrap;
+    }
+
+    .score-circle-container {
+        position: relative;
+        width: 220px;
+        height: 220px;
+    }
+
+    .score-circle-svg {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+    }
+
+    .score-bg {
+        fill: none;
+        stroke: rgba(44, 62, 80, 0.06);
+        stroke-width: 14;
+    }
+
+    .score-progress {
+        fill: none;
+        stroke: url(#scoreGradient);
+        stroke-width: 14;
+        stroke-linecap: round;
+        stroke-dasharray: 565.48;
+        stroke-dashoffset: 565.48;
+        transition: stroke-dashoffset 2s ease-out;
+        filter: drop-shadow(0 0 10px rgba(30, 107, 123, 0.4));
+    }
+
+    .score-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+
+    .score-value {
+        font-size: 4rem;
+        font-weight: 900;
+        font-family: 'Outfit', sans-serif;
+        color: var(--text-main);
+        display: block;
+        line-height: 1;
+    }
+
+    .score-label-small {
+        font-size: 1.2rem;
+        color: var(--text-muted);
+        display: block;
+        margin-top: 5px;
+    }
+
+    .score-info {
+        text-align: left;
+        max-width: 400px;
+    }
+
+    .score-info h2 {
+        font-size: 2.2rem;
+        margin-bottom: 15px;
+        color: var(--text-main);
+        font-weight: 700;
+    }
+
+    .score-info p {
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .performance-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        border-radius: 30px;
+        color: white;
+        font-weight: 700;
+        font-size: 1rem;
+        box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+    }
+
+    .badge-icon {
+        font-size: 1.4rem;
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 24px;
+        margin-top: 40px;
+    }
+
+    .metric-card {
+        padding: 35px;
+        text-align: center;
+    }
+
+    .metric-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+    }
+
+    .metric-value {
+        font-size: 2.2rem;
+        font-weight: 800;
+        font-family: 'Outfit', sans-serif;
+        color: var(--primary);
+        margin-bottom: 10px;
+    }
+
+    .metric-label {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        font-weight: 700;
+    }
+
+    /* Analytics Grid - 3 Column Layout */
+    .analytics-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-top: 40px;
+    }
+
+    .analytics-card {
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        min-height: 380px;
+        max-height: 380px;
+    }
+
+    /* Enhanced Card Headers */
+    .card-header-enhanced {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(59, 130, 246, 0.15);
+    }
+
+    .card-icon {
+        font-size: 1.8rem;
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.15) 100%);
+        border-radius: 12px;
+    }
+
+    .success-icon {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.15) 100%);
+    }
+
+    .warning-icon {
+        background: linear-gradient(135deg, rgba(251, 146, 60, 0.15) 0%, rgba(249, 115, 22, 0.15) 100%);
+    }
+
+    /* Section Titles - Blue Color */
+    .section-title {
+        margin: 0;
+        font-size: 1.15rem;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 800;
+        flex: 1;
+    }
+
+    .chart-wrapper {
+        position: relative;
+        flex: 1;
+        min-height: 180px;
+        max-height: 180px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .chart-wrapper canvas {
+        max-height: 180px !important;
+        width: 100% !important;
+    }
+
+    /* Feedback Titles - Blue Color */
+    .feedback-title {
+        margin: 0;
+        font-size: 1.15rem;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 800;
+        flex: 1;
+    }
+
+    /* Feedback Grid */
+    .feedback-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-top: 40px;
+    }
+
+    .feedback-col {
+        padding: 35px;
+    }
+
+
+
+    .feedback-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+    }
+
+    .feedback-list li {
+        margin-bottom: 12px;
+        padding: 16px 18px;
+        background: rgba(30, 107, 123, 0.04);
+        border-left: 4px solid var(--primary);
+        border-radius: 10px;
+        color: var(--text-secondary);
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .feedback-list li:hover {
+        background: rgba(30, 107, 123, 0.08);
+        transform: translateX(8px);
+        border-left-color: #E74C3C;
+        color: var(--text-main);
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .analytics-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .analytics-card {
+            min-height: auto;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .results-section .page-header h1 {
+            font-size: 2.2rem;
+        }
+
+        .score-display {
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .score-info {
+            text-align: center;
+        }
+
+        .feedback-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .metrics-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .breakdown-label {
+            min-width: 100px;
+            font-size: 0.85rem;
+        }
+    }
+</style>
+
+<script>
+    // Get session ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+
+    // Elements
+    const loadingState = document.getElementById('loading-state');
+    const resultsContainer = document.getElementById('results-container');
+    const errorState = document.getElementById('error-state');
+
+    // Color schemes for different score ranges
+    const getScoreColor = (score) => {
+        if (score >= 90) return { start: '#10b981', end: '#059669' }; // Green
+        if (score >= 75) return { start: '#3b82f6', end: '#2563eb' }; // Blue
+        if (score >= 60) return { start: '#f59e0b', end: '#d97706' }; // Orange
+        return { start: '#ef4444', end: '#dc2626' }; // Red
+    };
+
+    // Fetch and display results
+    async function loadResults() {
+        if (!sessionId) {
+            console.error('No session ID in URL');
+            showError('No session ID provided in URL');
+            return;
+        }
+
+        console.log('Loading results for session:', sessionId);
+
+        try {
+            const apiUrl = `/api/interview_results/${sessionId}`;
+            console.log('Fetching from:', apiUrl);
+
+            const response = await fetch(apiUrl);
+            console.log('Response status:', response.status);
+            console.log('Response OK:', response.ok);
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('API Error:', errorData);
+                throw new Error(errorData.error || 'Failed to fetch results');
+            }
+
+            const data = await response.json();
+            console.log('Results data received:', data);
+            displayResults(data);
+        } catch (error) {
+            console.error('Error loading results:', error);
+            showError(error.message || 'Failed to load interview results. Please try again.');
+        }
+    }
+
+    function displayResults(data) {
+        // Hide loading, show results
+        loadingState.style.display = 'none';
+        resultsContainer.style.display = 'block';
+
+        // Update meta info
+        const metaInfo = `${data.mode} Interview${data.job_role !== 'Not specified' ? ' • ' + data.job_role : ''}${data.company !== 'Not specified' ? ' • ' + data.company : ''}`;
+        document.getElementById('interview-meta').textContent = metaInfo;
+
+        // Update overall score
+        const overallScore = data.overall_score;
+        document.getElementById('overall-score').textContent = overallScore;
+
+        // Animate score circle
+        const circumference = 2 * Math.PI * 90;
+        const offset = circumference - (overallScore / 100) * circumference;
+        setTimeout(() => {
+            document.getElementById('score-progress-circle').style.strokeDashoffset = offset;
+        }, 100);
+
+        // Performance message and badge
+        let message = '';
+        let badgeText = '';
+        let badgeColor = '';
+
+        if (overallScore >= 90) {
+            message = '🎉 Outstanding performance! You\'re interview-ready!';
+            badgeText = 'Outstanding';
+            badgeColor = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+        } else if (overallScore >= 75) {
+            message = '✨ Great job! You\'re on the right track.';
+            badgeText = 'Excellent';
+            badgeColor = 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)';
+        } else if (overallScore >= 60) {
+            message = '👍 Good effort! Keep practicing to improve.';
+            badgeText = 'Good';
+            badgeColor = 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)';
+        } else {
+            message = '💪 Keep working on it! Practice makes perfect.';
+            badgeText = 'Needs Improvement';
+            badgeColor = 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)';
+        }
+
+        document.getElementById('performance-message').textContent = message;
+        const badge = document.getElementById('performance-badge');
+        badge.querySelector('.badge-text').textContent = badgeText;
+        badge.style.background = badgeColor;
+
+        // Update metrics
+        document.getElementById('metric-questions').textContent = data.metrics.total_responses;
+        document.getElementById('metric-confidence').textContent = Math.round(data.metrics.confidence) + '%';
+        document.getElementById('metric-pace').textContent = data.metrics.speaking_pace > 0 ? Math.round(data.metrics.speaking_pace) + ' WPM' : 'N/A';
+        document.getElementById('metric-duration').textContent = data.duration_minutes + ' min';
+
+        // Score breakdown - Create bar chart
+        if (data.score_breakdown && data.score_breakdown.length > 0) {
+            createBreakdownChart(data.score_breakdown);
+        }
+
+        // Strengths
+        const strengthsList = document.getElementById('strengths-list');
+        if (data.strengths.length > 0) {
+            strengthsList.innerHTML = '';
+            data.strengths.forEach(strength => {
+                const li = document.createElement('li');
+                li.textContent = strength;
+                strengthsList.appendChild(li);
+            });
+        } else {
+            strengthsList.innerHTML = '<li>Keep practicing to identify your strengths!</li>';
+        }
+
+        // Improvements
+        const improvementsList = document.getElementById('improvements-list');
+        if (data.improvements.length > 0) {
+            improvementsList.innerHTML = '';
+            data.improvements.forEach(improvement => {
+                const li = document.createElement('li');
+                li.textContent = improvement;
+                improvementsList.appendChild(li);
+            });
+        } else {
+            improvementsList.innerHTML = '<li>Great job! Keep up the good work.</li>';
+        }
+
+        // Performance trend chart
+        if (data.performance_trend && data.performance_trend.length > 0) {
+            createPerformanceChart(data.performance_trend);
+        }
+
+        // Skills bar chart
+        if (data.score_breakdown && data.score_breakdown.length > 0) {
+            createSkillsBarChart(data.score_breakdown);
+        }
+    }
+
+    function createPerformanceChart(trendData) {
+        const ctx = document.getElementById('performance-chart').getContext('2d');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: trendData.map((_, i) => `Q${i + 1}`),
+                datasets: [{
+                    label: 'Performance Score',
+                    data: trendData,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#3b82f6',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 3,
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    pointHoverBackgroundColor: '#1e6b7b',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(44, 62, 80, 0.95)',
+                        titleColor: '#fff',
+                        titleFont: {
+                            size: 13,
+                            weight: 'bold'
+                        },
+                        bodyColor: '#cbd5e1',
+                        bodyFont: {
+                            size: 12
+                        },
+                        borderColor: 'rgba(59, 130, 246, 0.5)',
+                        borderWidth: 2,
+                        padding: 12,
+                        displayColors: false,
+                        callbacks: {
+                            label: function (context) {
+                                return 'Score: ' + context.parsed.y + '/100';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(44, 62, 80, 0.08)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#64748b',
+                            font: {
+                                size: 11,
+                                weight: '600'
+                            },
+                            stepSize: 20,
+                            padding: 8
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(44, 62, 80, 0.08)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#64748b',
+                            font: {
+                                size: 11,
+                                weight: '600'
+                            },
+                            padding: 8
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function createBreakdownChart(scoreBreakdown) {
+        const ctx = document.getElementById('breakdown-chart').getContext('2d');
+
+        const labels = scoreBreakdown.map(item => item.category);
+        const scores = scoreBreakdown.map(item => parseInt(item.score));
+
+        // Calculate total for percentages
+        const total = scores.reduce((sum, score) => sum + score, 0);
+
+        // Professional gradient colors - Blues, Teals, Purples
+        const backgroundColors = [
+            'rgba(59, 130, 246, 0.9)',    // Bright Blue
+            'rgba(14, 165, 233, 0.9)',    // Sky Blue
+            'rgba(6, 182, 212, 0.9)',     // Cyan
+            'rgba(20, 184, 166, 0.9)',    // Teal
+            'rgba(139, 92, 246, 0.9)',    // Purple
+        ];
+
+        const borderColors = [
+            '#3b82f6',
+            '#0ea5e9',
+            '#06b6d4',
+            '#14b8a6',
+            '#8b5cf6',
+        ];
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Score',
+                    data: scores,
+                    backgroundColor: backgroundColors.slice(0, scores.length),
+                    borderColor: '#ffffff',
+                    borderWidth: 3,
+                    hoverOffset: 12,
+                    hoverBorderWidth: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                },
+                layout: {
+                    padding: {
+                        left: 40,
+                        right: 40,
+                        top: 30,
+                        bottom: 30
+                    }
+                }
+            },
+            plugins: [{
+                id: 'externalLabels',
+                afterDraw: function (chart) {
+                    const ctx = chart.ctx;
+                    const meta = chart.getDatasetMeta(0);
+                    const centerX = chart.chartArea.left + (chart.chartArea.right - chart.chartArea.left) / 2;
+                    const centerY = chart.chartArea.top + (chart.chartArea.bottom - chart.chartArea.top) / 2;
+
+                    meta.data.forEach((element, index) => {
+                        const model = element;
+                        const startAngle = model.startAngle;
+                        const endAngle = model.endAngle;
+                        const outerRadius = model.outerRadius;
+
+                        // Calculate angle for label position
+                        const angle = startAngle + (endAngle - startAngle) / 2;
+
+                        // Calculate line start point (edge of donut)
+                        const lineStartX = centerX + Math.cos(angle) * outerRadius;
+                        const lineStartY = centerY + Math.sin(angle) * outerRadius;
+
+                        // Calculate line end point (extended outward) - REDUCED
+                        const lineLength = 15;
+                        const lineEndX = centerX + Math.cos(angle) * (outerRadius + lineLength);
+                        const lineEndY = centerY + Math.sin(angle) * (outerRadius + lineLength);
+
+                        // Calculate horizontal line extension - REDUCED
+                        const horizontalLength = 12;
+                        const isRightSide = Math.cos(angle) > 0;
+                        const horizontalEndX = lineEndX + (isRightSide ? horizontalLength : -horizontalLength);
+
+                        // Get data
+                        const value = chart.data.datasets[0].data[index];
+                        const percentage = ((value / total) * 100).toFixed(1);
+                        const label = chart.data.labels[index];
+                        const color = chart.data.datasets[0].backgroundColor[index];
+
+                        ctx.save();
+
+                        // Draw connecting line
+                        ctx.strokeStyle = color;
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(lineStartX, lineStartY);
+                        ctx.lineTo(lineEndX, lineEndY);
+                        ctx.lineTo(horizontalEndX, lineEndY);
+                        ctx.stroke();
+
+                        // Draw small circle at line start
+                        ctx.fillStyle = color;
+                        ctx.beginPath();
+                        ctx.arc(lineStartX, lineStartY, 3, 0, 2 * Math.PI);
+                        ctx.fill();
+
+                        // Prepare label text
+                        const labelText = label;
+                        const percentText = percentage + '%';
+
+                        // Set text alignment based on side
+                        ctx.textAlign = isRightSide ? 'left' : 'right';
+                        ctx.textBaseline = 'middle';
+
+                        // Calculate text position - ADJUSTED
+                        const textX = horizontalEndX + (isRightSide ? 5 : -5);
+                        const textY = lineEndY;
+
+                        // Draw category label
+                        ctx.fillStyle = '#2C3E50';
+                        ctx.font = 'bold 9px Inter';
+                        ctx.fillText(labelText, textX, textY - 6);
+
+                        // Draw percentage
+                        ctx.fillStyle = color.replace('0.9)', '1)');
+                        ctx.font = 'bold 12px Outfit';
+                        ctx.fillText(percentText, textX, textY + 6);
+
+                        ctx.restore();
+                    });
+                }
+            }]
+        });
+    }
+
+    function createSkillsBarChart(scoreBreakdown) {
+        const ctx = document.getElementById('skills-chart').getContext('2d');
+
+        const labels = scoreBreakdown.map(item => item.category);
+        const scores = scoreBreakdown.map(item => parseInt(item.score));
+
+        // Create gradient colors for each bar based on score
+        const backgroundColors = scores.map(score => {
+            if (score >= 90) return 'rgba(16, 185, 129, 0.85)';
+            if (score >= 75) return 'rgba(59, 130, 246, 0.85)';
+            if (score >= 60) return 'rgba(59, 130, 246, 0.65)';
+            return 'rgba(59, 130, 246, 0.5)';
+        });
+
+        const borderColors = scores.map(score => {
+            if (score >= 90) return '#10b981';
+            if (score >= 75) return '#3b82f6';
+            if (score >= 60) return '#3b82f6';
+            return '#3b82f6';
+        });
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Score',
+                    data: scores,
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
+                    borderWidth: 2,
+                    borderRadius: 6,
+                    barThickness: 28
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(44, 62, 80, 0.95)',
+                        titleColor: '#fff',
+                        titleFont: {
+                            size: 12,
+                            weight: 'bold'
+                        },
+                        bodyColor: '#cbd5e1',
+                        bodyFont: {
+                            size: 11
+                        },
+                        borderColor: 'rgba(59, 130, 246, 0.5)',
+                        borderWidth: 2,
+                        padding: 10,
+                        displayColors: false,
+                        callbacks: {
+                            label: function (context) {
+                                return 'Score: ' + context.parsed.x + '/100';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(44, 62, 80, 0.08)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#64748b',
+                            font: {
+                                size: 10,
+                                weight: '600'
+                            },
+                            stepSize: 25
+                        }
+                    },
+                    y: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#2C3E50',
+                            font: {
+                                size: 10,
+                                weight: '700'
+                            },
+                            padding: 8
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function showError(message) {
+        loadingState.style.display = 'none';
+        errorState.style.display = 'block';
+        document.getElementById('error-message').textContent = message;
+    }
+
+    // Load results on page load
+    document.addEventListener('DOMContentLoaded', loadResults);
+</script>
+{% endblock %}

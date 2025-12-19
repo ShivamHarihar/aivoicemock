@@ -1,0 +1,38 @@
+/* User will add CSS manually */
+@media print {
+    @page {
+        margin: 0;
+        size: A4;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-size: 10pt;
+    }
+
+    .resume-container {
+        grid-template-columns: 30% 70% !important; /* Keep two columns */
+        width: 210mm !important;
+        min-height: 297mm !important; 
+        margin: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .sidebar {
+        background-color: #38424a !important; /* Keep dark sidebar color */
+        padding: 20px !important;
+    }
+
+    .resume-photo {
+        display: none !important; /* Hide photo in print */
+    }
+
+    .main-content {
+        padding: 20px !important;
+    }
+
+    .no-break {
+        break-inside: avoid;
+    }
+}

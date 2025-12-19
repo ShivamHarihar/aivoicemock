@@ -1,0 +1,54 @@
+
+:root {
+    --primary-color: #1b5e20;
+    --secondary-color: #4caf50;
+    --text-main: #333333;
+    --text-muted: #666666;
+    --bg-body: #ffffff;
+    --font-main: 'Lato', sans-serif;
+}
+body {
+    font-family: var(--font-main);
+    color: var(--text-main);
+    line-height: 1.6;
+    margin: 0; 
+    padding: 0;
+    box-sizing: border-box;
+}
+*, *::before, *::after { box-sizing: inherit; }
+h1, h2, h3, h4 { margin-top: 0; }
+a { text-decoration: none; color: inherit; }
+ul { padding-left: 1.2rem; margin: 0.5rem 0; }
+
+/* Layout: Modern Sidebar Left */
+body { background: #f0f0f0; }
+.resume-wrapper { 
+    display: grid; 
+    grid-template-columns: 280px 1fr; 
+    min-height: 100vh; 
+    background: white; 
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+.sidebar { 
+    background: var(--primary-color); 
+    color: white; 
+    padding: 2rem; 
+    text-align: left; 
+}
+.sidebar .header h1 { color: white; font-size: 2rem; line-height: 1.2; margin-bottom: 0.5rem; }
+.sidebar .header h3 { color: rgba(255,255,255,0.8); font-size: 1.1rem; font-weight: 400; margin-bottom: 2rem; }
+.sidebar .contact-info { display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.9rem; opacity: 0.9; margin-bottom: 3rem; }
+.sidebar .section h2 { color: white; border-bottom: 1px solid rgba(255,255,255,0.3); font-size: 1.2rem; margin-top: 2rem; }
+
+.main-content { padding: 3rem; }
+.main-content .section h2 { color: var(--primary-color); font-size: 1.8rem; text-transform: uppercase; letter-spacing: 2px; border-bottom: 2px solid var(--secondary-color); display: inline-block; padding-bottom: 5px; }
+
+.experience-item { margin-bottom: 2rem; position: relative; padding-left: 1.5rem; border-left: 2px solid #eee; }
+.experience-item::after { content: ''; position: absolute; left: -6px; top: 5px; width: 10px; height: 10px; background: var(--secondary-color); border-radius: 50%; }
+.item-header { margin-bottom: 0.5rem; }
+.item-title { font-weight: 700; font-size: 1.2rem; display: block; }
+.item-subtitle { color: #666; display: block; margin-bottom: 0.2rem; }
+.item-date { font-size: 0.85rem; color: #999; text-transform: uppercase; letter-spacing: 1px; }
+
+.skill-tag { display: block; margin-bottom: 0.5rem; } /* In sidebar */

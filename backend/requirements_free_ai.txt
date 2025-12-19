@@ -1,0 +1,16 @@
+# Free AI System - Additional Requirements
+
+# HuggingFace Inference
+huggingface-hub>=0.20.0
+
+# Groq AI
+groq>=0.4.0
+
+# Redis for caching (optional but recommended)
+redis>=5.0.0
+
+# Async support
+aiohttp>=3.9.0
+
+# For local LLM (optional - only if using local fallback)
+# llama-cpp-python>=0.2.0  # Uncomment if using local LLM

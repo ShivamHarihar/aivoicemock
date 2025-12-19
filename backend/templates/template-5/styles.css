@@ -1,0 +1,66 @@
+/* Template 5: Top header band + boxed right column */
+/* Reference: Screenshot 104700.png */
+
+@import url('../css/base_styles.css');
+
+body.template-5 {
+    font-family: 'Arial', sans-serif;
+}
+
+.resume-container[data-template="template-5"] {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: auto 1fr;
+    /* A4 Dimensions */
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    background: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Header Band */
+.resume-container[data-template="template-5"] .resume-header {
+    grid-column: 1 / -1;
+    background-color: #0b4ea2;
+    color: #ffffff;
+    padding: 2rem 3rem;
+}
+
+.resume-container[data-template="template-5"] .resume-header h1 {
+    font-size: 32px;
+    margin: 0;
+}
+
+/* Main Content (Left) */
+.resume-container[data-template="template-5"] .section-summary,
+.resume-container[data-template="template-5"] .section-experience,
+.resume-container[data-template="template-5"] .section-projects {
+    grid-column: 1;
+    padding: 2rem 3rem;
+}
+
+/* Right Column (Boxed) */
+.resume-container[data-template="template-5"] .section-contact,
+.resume-container[data-template="template-5"] .section-skills,
+.resume-container[data-template="template-5"] .section-education {
+    grid-column: 2;
+    padding: 2rem;
+    margin: 2rem;
+    background: #f8f9fa;
+    border-left: 5px solid #0b4ea2;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+}
+
+.resume-container[data-template="template-5"] h2 {
+    color: #0b4ea2;
+    font-size: 18px;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+.resume-container[data-template="template-5"] .right-column h2 {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.5rem;
+}

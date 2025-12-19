@@ -1,0 +1,502 @@
+================================================================================
+                    SAMPRO AI - QUICK REFERENCE FLOW
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                     INTERVIEW FLOW (SIMPLIFIED)                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+USER JOURNEY:
+-------------
+
+1. Homepage (/) 
+   ↓
+2. Dashboard (/dashboard)
+   - Select: Mode, Job Role, Company
+   - Upload: Resume (optional)
+   - Click: "Start Interview"
+   ↓
+3. Backend: Create Session
+   - Generate session_id
+   - Store context
+   - Generate greeting
+   - Convert to speech (Edge TTS)
+   ↓
+4. Interview Page (/interview)
+   - Play AI greeting
+   - Start listening
+   ↓
+5. INTERVIEW LOOP (15 minutes):
+   ┌─────────────────────────────────────┐
+   │ User speaks                         │
+   │   ↓                                 │
+   │ Browser STT transcribes             │
+   │   ↓                                 │
+   │ Send to backend (/process_voice)   │
+   │   ↓                                 │
+   │ Backend analyzes:                   │
+   │   - Audio (pace, fillers)           │
+   │   - Content (mistakes, relevance)   │
+   │   - Confidence score                │
+   │   ↓                                 │
+   │ LLM generates:                      │
+   │   - Feedback                        │
+   │   - Next question                   │
+   │   ↓                                 │
+   │ Convert to speech (Edge TTS)        │
+   │   ↓                                 │
+   │ Play AI response                    │
+   │   ↓                                 │
+   │ Listen for next answer              │
+   └─────────────────────────────────────┘
+   ↓
+6. Performance Summary (5 minutes)
+   - AI analyzes full transcript
+   - Generates comprehensive feedback
+   - Delivers verbal summary
+   ↓
+7. Results Page (/result)
+   - Final score
+   - Strengths & weaknesses
+   - Improvement plan
+   - Download report
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                   RESUME ANALYSIS FLOW (SIMPLIFIED)                     │
+└─────────────────────────────────────────────────────────────────────────┘
+
+USER JOURNEY:
+-------------
+
+1. Resume Analysis Page (/resume_analysis)
+   - Upload PDF/TXT resume
+   ↓
+2. Backend: Analyze Resume
+   - Parse text (PyPDF2)
+   - LLM analysis (Groq)
+   - Calculate ATS score
+   - Identify strengths/weaknesses
+   ↓
+3. ATS Dashboard (/ats_dashboard)
+   - Display score (animated)
+   - Show factor scores
+   - List improvements
+   ↓
+4. Click "Recreate with AI"
+   ↓
+5. Backend: AI Recreation
+   - LLM optimizes resume
+   - Adds keywords
+   - Improves formatting
+   - Outputs Markdown
+   ↓
+6. Display Recreated Resume
+   - Preview (HTML)
+   - Markdown (raw text)
+   - Download options
+   ↓
+7. Download
+   - PDF (ReportLab)
+   - Markdown (text file)
+
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        DATA FLOW DIAGRAM                                │
+└─────────────────────────────────────────────────────────────────────────┘
+
+INTERVIEW DATA FLOW:
+--------------------
+
+Frontend                    Backend                     External APIs
+--------                    -------                     -------------
+
+[Browser]                   [Flask App]                 [Groq LLM]
+   │                            │                            │
+   │ 1. Start Interview         │                            │
+   ├──────────────────────────→ │                            │
+   │                            │ 2. Generate greeting       │
+   │                            ├──────────────────────────→ │
+   │                            │ ← 3. AI greeting text      │
+   │                            │                            │
+   │                            │ [Edge TTS]                 │
+   │                            │ 4. Text → Speech           │
+   │                            │                            │
+   │ ← 5. session_id + audio    │                            │
+   │                            │                            │
+   │ [Web Speech API]           │                            │
+   │ 6. User speaks             │                            │
+   │ 7. STT transcription       │                            │
+   │                            │                            │
+   │ 8. Send transcript         │                            │
+   ├──────────────────────────→ │                            │
+   │                            │                            │
+   │                            │ [Audio Analyzer]           │
+   │                            │ 9. Analyze pace, fillers   │
+   │                            │                            │
+   │                            │ [Mistake Detector]         │
+   │                            │ 10. Check content quality  │
+   │                            │                            │
+   │                            │ 11. Generate AI response   │
+   │                            ├──────────────────────────→ │
+   │                            │ ← 12. AI question/feedback │
+   │                            │                            │
+   │                            │ [Edge TTS]                 │
+   │                            │ 13. Text → Speech          │
+   │                            │                            │
+   │ ← 14. AI response + audio  │                            │
+   │                            │                            │
+   │ 15. Play audio             │                            │
+   │ 16. Listen again           │                            │
+   │                            │                            │
+   └─────── LOOP ──────────────┘                            │
+                                                             │
+   [After 15 min]              │                            │
+   │                            │                            │
+   │ 17. Request final results  │                            │
+   ├──────────────────────────→ │                            │
+   │                            │ 18. Semantic analysis      │
+   │                            ├──────────────────────────→ │
+   │                            │ ← 19. Evaluation scores    │
+   │                            │                            │
+   │ ← 20. Final report         │                            │
+   │                            │                            │
+
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        KEY COMPONENTS                                   │
+└─────────────────────────────────────────────────────────────────────────┘
+
+FRONTEND COMPONENTS:
+--------------------
+1. script.js
+   - Interview control logic
+   - Voice recording & playback
+   - VAD & visualization
+   - Turn-taking management
+
+2. ats_dashboard.js
+   - Resume analysis display
+   - AI recreation handling
+   - PDF download logic
+
+3. HTML Templates
+   - index.html (homepage)
+   - dashboard.html (interview setup)
+   - interview.html (active interview)
+   - result.html (feedback report)
+   - resume_analysis.html (upload)
+   - ats_dashboard.html (analysis)
+
+BACKEND COMPONENTS:
+-------------------
+1. app.py
+   - Flask routes
+   - Request handling
+   - Response formatting
+
+2. interview_engine.py
+   - Main interview logic
+   - Phase management
+   - Response generation
+
+3. audio_analyzer.py
+   - Pace calculation
+   - Filler detection
+   - Confidence scoring
+
+4. mistake_detector.py
+   - Content analysis
+   - Relevance checking
+   - Structure evaluation
+
+5. scoring.py
+   - Local metrics
+   - Semantic scoring
+   - Final score calculation
+
+6. resume_analyzer.py
+   - Resume parsing
+   - ATS analysis
+
+7. resume_recreator.py
+   - AI optimization
+   - Markdown generation
+
+8. pdf_generator.py
+   - PDF creation
+   - Styling & formatting
+
+9. grok_client.py
+   - LLM API wrapper
+   - Prompt management
+
+10. edge_tts_client.py
+    - Text-to-speech
+    - Audio generation
+
+11. memory_store.py
+    - Session management
+    - Data persistence
+
+12. prompts.py
+    - System instructions
+    - Prompt templates
+
+13. question_packs.py
+    - Question database
+    - Company styles
+
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        ANALYSIS METRICS                                 │
+└─────────────────────────────────────────────────────────────────────────┘
+
+REAL-TIME METRICS:
+------------------
+1. Speaking Pace (WPM)
+   - Ideal: 120-160 WPM
+   - Too slow: < 100 WPM
+   - Too fast: > 180 WPM
+
+2. Confidence Score (0-100)
+   - High: 80-100
+   - Medium: 60-79
+   - Low: 0-59
+
+3. Filler Words
+   - Count & percentage
+   - Types: um, uh, like, you know, etc.
+
+4. Content Quality
+   - Rambling detection
+   - Relevance checking
+   - Structure analysis (STAR)
+
+5. Script Reading
+   - Formality detection
+   - Naturalness score
+
+FINAL METRICS:
+--------------
+1. Overall Score (0-10)
+   - 55% LLM semantic score
+   - 45% Local metrics
+
+2. Subscores
+   - Technical depth
+   - Communication
+   - Problem-solving
+   - Cultural fit
+
+3. Qualitative Feedback
+   - Strengths (list)
+   - Weaknesses (list)
+   - Improvement plan (steps)
+   - Summary (paragraph)
+
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        TIMING BREAKDOWN                                 │
+└─────────────────────────────────────────────────────────────────────────┘
+
+INTERVIEW PHASES:
+-----------------
+
+Phase 1: Q&A (15 minutes)
+├─ Question 1 (Easy)          → 1-2 min
+├─ Question 2 (Medium)        → 1-2 min
+├─ Question 3 (Medium)        → 1-2 min
+├─ Question 4 (Hard)          → 2-3 min
+├─ Question 5 (Easy)          → 1-2 min
+├─ Question 6 (Medium)        → 1-2 min
+├─ Question 7 (Hard)          → 2-3 min
+├─ Question 8 (Medium)        → 1-2 min
+└─ Question 9-12 (varies)     → remaining time
+
+Phase 2: Summary (5 minutes)
+├─ Overall performance        → 1 min
+├─ Strengths analysis         → 1 min
+├─ Weaknesses analysis        → 1 min
+├─ Specific examples          → 1 min
+└─ Improvement tips           → 1 min
+
+Total: 20 minutes
+
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        FILE STRUCTURE                                   │
+└─────────────────────────────────────────────────────────────────────────┘
+
+sampro-ai-interview/
+│
+├── backend/
+│   ├── app/
+│   │   └── app.py                    [Main Flask application]
+│   │
+│   └── src/
+│       ├── interview_engine.py       [Core interview logic]
+│       ├── audio_analyzer.py         [Speech analysis]
+│       ├── mistake_detector.py       [Content analysis]
+│       ├── scoring.py                [Score calculation]
+│       ├── resume_analyzer.py        [Resume parsing & analysis]
+│       ├── resume_recreator.py       [AI resume optimization]
+│       ├── pdf_generator.py          [PDF creation]
+│       ├── grok_client.py            [LLM API wrapper]
+│       ├── edge_tts_client.py        [Text-to-speech]
+│       ├── whisper_stt.py            [Speech-to-text backup]
+│       ├── spacy_parser.py           [NLP parsing]
+│       ├── memory_store.py           [Session management]
+│       ├── prompts.py                [Prompt templates]
+│       ├── question_packs.py         [Question database]
+│       └── utils.py                  [Utilities]
+│
+├── frontend/
+│   ├── public/
+│   │   ├── css/
+│   │   │   └── style.css             [Styling]
+│   │   │
+│   │   ├── js/
+│   │   │   ├── script.js             [Interview logic]
+│   │   │   ├── ats_dashboard.js      [Resume dashboard]
+│   │   │   ├── animations.js         [UI animations]
+│   │   │   └── about.js              [About page]
+│   │   │
+│   │   ├── audio/                    [Generated audio files]
+│   │   └── uploads/                  [Uploaded resumes]
+│   │
+│   └── src/
+│       ├── index.html                [Homepage]
+│       ├── dashboard.html            [Interview setup]
+│       ├── interview.html            [Active interview]
+│       ├── result.html               [Results page]
+│       ├── resume_analysis.html      [Resume upload]
+│       ├── ats_dashboard.html        [Analysis dashboard]
+│       ├── features.html             [Features page]
+│       ├── pricing.html              [Pricing page]
+│       ├── about.html                [About page]
+│       └── resources.html            [Resources page]
+│
+├── configs/
+│   └── requirements.txt              [Python dependencies]
+│
+├── scripts/
+│   ├── verify_system.py              [System verification]
+│   ├── test_system.py                [System testing]
+│   └── test_pdf.py                   [PDF testing]
+│
+├── .env                              [Environment variables]
+├── .gitignore                        [Git ignore rules]
+├── PROJECT_DOCUMENTATION.md          [Detailed documentation]
+└── PROJECT_FLOW_END_TO_END.txt       [This file]
+
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        API ENDPOINTS                                    │
+└─────────────────────────────────────────────────────────────────────────┘
+
+INTERVIEW ENDPOINTS:
+--------------------
+POST /start_call_interview
+     → Initialize interview session
+     
+POST /process_voice
+     → Process user answer, generate AI response
+     
+POST /upload_profile
+     → Upload and parse resume
+     
+POST /final_results
+     → Calculate and return final scores
+
+RESUME ENDPOINTS:
+-----------------
+POST /api/analyze_resume
+     → Analyze resume for ATS score
+     
+POST /api/recreate_resume
+     → Optimize resume with AI
+     
+POST /api/download_resume_pdf
+     → Generate PDF from markdown
+
+PAGE ROUTES:
+------------
+GET  /                    → Homepage
+GET  /dashboard           → Interview setup
+GET  /interview           → Active interview
+GET  /result              → Results page
+GET  /resume_analysis     → Resume upload
+GET  /ats_dashboard       → Analysis dashboard
+GET  /features            → Features
+GET  /pricing             → Pricing
+GET  /about               → About
+GET  /resources           → Resources
+
+STATIC FILES:
+-------------
+GET  /audio/<filename>    → Audio files
+GET  /static/<filename>   → Static assets
+
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        TECHNOLOGY STACK                                 │
+└─────────────────────────────────────────────────────────────────────────┘
+
+Backend:
+--------
+- Python 3.8+
+- Flask (web framework)
+- Groq API (LLM)
+- Edge TTS (text-to-speech)
+- Whisper (speech-to-text backup)
+- SpaCy (NLP)
+- PyPDF2 (PDF parsing)
+- ReportLab (PDF generation)
+
+Frontend:
+---------
+- HTML5
+- CSS3 (Glassmorphism design)
+- JavaScript (Vanilla)
+- Web Speech API (STT)
+- Web Audio API (VAD)
+
+APIs & Services:
+----------------
+- Groq LLM API (llama-3.3-70b-versatile)
+- Microsoft Edge TTS (free)
+- Browser Speech Recognition
+
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        RUNNING THE PROJECT                              │
+└─────────────────────────────────────────────────────────────────────────┘
+
+1. Install dependencies:
+   pip install -r configs/requirements.txt
+
+2. Set up environment:
+   Create .env file with:
+   GROQ_API_KEY=your_key_here
+
+3. Run the application:
+   cd backend/app
+   python app.py
+
+4. Open browser:
+   http://localhost:5000
+
+5. Test the system:
+   python scripts/verify_system.py
+
+================================================================================
+                        END OF QUICK REFERENCE
+================================================================================

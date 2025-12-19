@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SAMPRO AI | Master Your Interview Skills{% endblock %}</title>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ats_dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/about_page.css') }}">
+
+    <style>
+        /* Custom SAMPRO AI Logo Styles */
+        .logo-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-text-brand {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            gap: 6px;
+        }
+
+        .logo-sampro {
+            background: linear-gradient(135deg, #00f2ff 0%, #0061ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+        }
+
+        .logo-ai {
+            background: linear-gradient(135deg, #ff0055 0%, #ff00aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(255, 0, 85, 0.3);
+        }
+
+        .logo-icon-wrapper {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Knowledge Orb Animations */
+        @keyframes orbital-spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes orbital-spin-reverse {
+            0% {
+                transform: rotate(360deg);
+            }
+
+            100% {
+                transform: rotate(0deg);
+            }
+        }
+
+        @keyframes core-pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+                filter: drop-shadow(0 0 5px rgba(0, 242, 255, 0.5));
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+                filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.8));
+            }
+        }
+
+        .k-orb-ring {
+            transform-origin: center;
+            transition: all 0.5s ease;
+        }
+
+        .k-orb-core {
+            animation: core-pulse 3s ease-in-out infinite;
+            transform-origin: center;
+        }
+
+        .k-ring-1 {
+            animation: orbital-spin 10s linear infinite;
+        }
+
+        .k-ring-2 {
+            animation: orbital-spin-reverse 15s linear infinite;
+        }
+
+        .k-ring-3 {
+            animation: orbital-spin 20s linear infinite;
+        }
+
+        /* Interactive States */
+        .logo-brand:hover .k-ring-1 {
+            animation-duration: 3s;
+            stroke: #00f2ff;
+        }
+
+        .logo-brand:hover .k-ring-2 {
+            animation-duration: 5s;
+            stroke: #ff0055;
+        }
+
+        .logo-brand:hover .k-ring-3 {
+            animation-duration: 7s;
+            stroke: #00f2ff;
+        }
+
+        .logo-brand:hover .k-orb-core {
+            animation-duration: 1s;
+            fill: #fff;
+        }
+
+        .logo-brand:hover .logo-icon-wrapper {
+            filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.3));
+        }
+
+        .footer-logo-text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3rem;
+            display: flex;
+            gap: 6px;
+        }
+    </style>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+</head>
+
+<body>
+    <!-- Background Elements -->
+    <div class="fixed-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar glass-nav">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="logo">
+                <div class="logo-brand">
+                    <div class="logo-icon-wrapper">
+                        <svg class="logo-icon" width="50" height="50" viewBox="0 0 100 100" fill="none">
+                            <defs>
+                                <linearGradient id="core-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#ffffff" />
+                                    <stop offset="100%" stop-color="#00f2ff" />
+                                </linearGradient>
+                                <filter id="glow-soft">
+                                    <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+                            </defs>
+
+                            <!-- Outer Data Ring -->
+                            <circle cx="50" cy="50" r="45" stroke="rgba(255,255,255,0.1)" stroke-width="1"
+                                fill="none" />
+                            <path d="M50,5 A45,45 0 0,1 95,50" stroke="#00f2ff" stroke-width="2" stroke-linecap="round"
+                                class="k-orb-ring k-ring-3" style="opacity: 0.5" />
+
+                            <!-- Middle Orbital -->
+                            <ellipse cx="50" cy="50" rx="35" ry="15" stroke="rgba(255,255,255,0.2)" stroke-width="1"
+                                fill="none" class="k-orb-ring k-ring-1" transform="rotate(45 50 50)" />
+                            <circle cx="82" cy="38" r="3" fill="#00f2ff" class="k-orb-ring k-ring-1"
+                                transform="rotate(45 50 50)" />
+
+                            <!-- Inner Orbital -->
+                            <ellipse cx="50" cy="50" rx="35" ry="15" stroke="rgba(255, 0, 85, 0.3)" stroke-width="1"
+                                fill="none" class="k-orb-ring k-ring-2" transform="rotate(-45 50 50)" />
+                            <circle cx="18" cy="62" r="3" fill="#ff0055" class="k-orb-ring k-ring-2"
+                                transform="rotate(-45 50 50)" />
+
+                            <!-- Central Knowledge Core -->
+                            <circle cx="50" cy="50" r="12" fill="url(#core-grad)" class="k-orb-core"
+                                filter="url(#glow-soft)" />
+                            <circle cx="50" cy="50" r="18" stroke="rgba(0, 242, 255, 0.3)" stroke-width="1" fill="none"
+                                class="k-orb-core" style="animation-delay: 0.5s" />
+                        </svg>
+                    </div>
+                    <span class="logo-text-brand">
+                        <span class="logo-sampro">SAMPRO</span>
+                        <span class="logo-ai">AI</span>
+                    </span>
+                </div>
+            </a>
+
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}"
+                    class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">Home</a>
+                <a href="{{ url_for('create_resume') }}"
+                    class="nav-link {% if request.endpoint == 'create_resume' %}active{% endif %}">Create Resume</a>
+                <a href="{{ url_for('resume_analysis') }}"
+                    class="nav-link {% if request.endpoint == 'resume_analysis' %}active{% endif %}">Resume Analysis</a>
+                <a href="{{ url_for('features') }}"
+                    class="nav-link {% if request.endpoint == 'features' %}active{% endif %}">Features</a>
+                <a href="{{ url_for('pricing') }}"
+                    class="nav-link {% if request.endpoint == 'pricing' %}active{% endif %}">Pricing</a>
+                <a href="{{ url_for('resources') }}"
+                    class="nav-link {% if request.endpoint == 'resources' %}active{% endif %}">Resources</a>
+                <a href="{{ url_for('about') }}"
+                    class="nav-link {% if request.endpoint == 'about' %}active{% endif %}">About</a>
+            </div>
+
+            <div class="nav-actions">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-glow">
+                    <span>Launch App</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-toggle" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer glass-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col brand-col">
+                    <div class="footer-logo">
+                        <span class="footer-logo-text">
+                            <span
+                                style="color: #00f2ff; font-weight: 700; text-shadow: 0 0 15px rgba(0, 242, 255, 0.4);">SAMPRO</span>
+                            <span
+                                style="color: #ff0055; font-weight: 700; text-shadow: 0 0 15px rgba(255, 0, 85, 0.4);">AI</span>
+                        </span>
+                    </div>
+                    <p>Empowering candidates with cutting-edge AI technology to succeed in their career journey.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Twitter">𝕏</a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">in</a>
+                        <a href="#" class="social-link" aria-label="GitHub">git</a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('features') }}">Features</a></li>
+                        <li><a href="{{ url_for('pricing') }}">Pricing</a></li>
+                        <li><a href="{{ url_for('dashboard') }}">Try Demo</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('resources') }}">Interview Tips</a></li>
+                        <li><a href="#">Success Stories</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('about') }}">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="copyright">
+                    &copy; 2025 SAMPRO AI. All rights reserved.
+                </div>
+                <div class="legal-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

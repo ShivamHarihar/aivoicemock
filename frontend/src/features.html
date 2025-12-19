@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Features | SAMPRO AI{% endblock %}
+
+{% block content %}
+<section class="section ats-section">
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header fade-up">
+            <h1>Advanced <span class="text-gradient">Capabilities</span></h1>
+            <p class="subtitle">Powered by state-of-the-art AI models for unmatched realism.</p>
+        </div>
+
+        <!-- Content -->
+        <div class="container">
+            <div class="feature-row fade-up">
+                <div class="feature-text">
+                    <div class="feature-icon-lg">🎙️</div>
+                    <h2>Voice Analysis Engine</h2>
+                    <p>Our proprietary voice processing pipeline uses Whisper STT for accurate transcription and Edge
+                        TTS
+                        for lifelike responses. We analyze not just what you say, but how you say it—detecting
+                        confidence,
+                        pace, and clarity.</p>
+                    <ul class="feature-list">
+                        <li>Real-time transcription</li>
+                        <li>Tone and sentiment analysis</li>
+                        <li>Pace monitoring</li>
+                    </ul>
+                </div>
+                <div class="feature-visual glass-panel">
+                    <img src="{{ url_for('static', filename='images/voice_analysis.png') }}" alt="Voice Analysis Engine"
+                        style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px;">
+                </div>
+            </div>
+
+            <div class="feature-row reverse fade-up">
+                <div class="feature-text">
+                    <div class="feature-icon-lg">🧠</div>
+                    <h2>Context-Aware Questioning</h2>
+                    <p>Unlike static question banks, our AI adapts to your responses. If you mention a specific
+                        technology
+                        or experience, the AI will drill down with follow-up questions, just like a real hiring manager.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Dynamic follow-ups</li>
+                        <li>Resume-based tailoring</li>
+                        <li>Behavioral & Technical modes</li>
+                    </ul>
+                </div>
+                <div class="feature-visual glass-panel">
+                    <img src="{{ url_for('static', filename='images/ai_brain.png') }}" alt="Context-Aware AI"
+                        style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px;">
+                </div>
+            </div>
+        </div>
+</section>
+{% endblock %}

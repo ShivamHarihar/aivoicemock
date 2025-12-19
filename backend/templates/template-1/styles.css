@@ -1,0 +1,126 @@
+/* Template 1: Dark Sidebar */
+/* Reference: Screenshot 104619.png */
+
+@import url('../css/base_styles.css');
+
+body.template-1 {
+    font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #333;
+    background: #fff;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.resume-container[data-template="template-1"] {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    /* A4 Dimensions */
+    width: 210mm;
+    min-height: 297mm; 
+    margin: 0 auto;
+    background: #fff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+/* Sidebar Area */
+.resume-container[data-template="template-1"] .resume-header,
+.resume-container[data-template="template-1"] .section-contact,
+.resume-container[data-template="template-1"] .section-skills,
+.resume-container[data-template="template-1"] .section-languages,
+.resume-container[data-template="template-1"] .section-certifications,
+.resume-container[data-template="template-1"] .section-awards {
+    grid-column: 1;
+    background-color: #1f2a33;
+    color: #ffffff;
+    padding: 0 2rem;
+}
+
+/* First element in sidebar needs top padding */
+.resume-container[data-template="template-1"]> :first-child {
+    padding-top: 3rem;
+}
+
+/* Last element in sidebar needs bottom padding */
+.resume-container[data-template="template-1"] .section-skills:last-child {
+    padding-bottom: 3rem;
+}
+
+/* Main Content Area */
+.resume-container[data-template="template-1"] .section-summary,
+.resume-container[data-template="template-1"] .section-experience,
+.resume-container[data-template="template-1"] .section-education,
+.resume-container[data-template="template-1"] .section-projects {
+    grid-column: 2;
+    padding: 2rem 3rem;
+    background-color: #ffffff;
+    color: #333;
+}
+
+/* Sidebar Styling */
+.resume-container[data-template="template-1"] .resume-header h1 {
+    color: #fff;
+    font-size: 24px;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.resume-container[data-template="template-1"] .resume-header p {
+    color: #a0aec0;
+    font-size: 13px;
+    margin-bottom: 0.5rem;
+}
+
+.resume-container[data-template="template-1"] .section-skills h2,
+.resume-container[data-template="template-1"] .section-contact h2 {
+    color: #fff;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #4a5568;
+    padding-bottom: 0.5rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.resume-container[data-template="template-1"] .section-skills ul,
+.resume-container[data-template="template-1"] .section-contact ul {
+    list-style: none;
+    padding: 0;
+}
+
+.resume-container[data-template="template-1"] .section-skills li,
+.resume-container[data-template="template-1"] .section-contact li {
+    margin-bottom: 0.5rem;
+    color: #cbd5e0;
+}
+
+/* Main Content Styling */
+.resume-container[data-template="template-1"] h2 {
+    color: #1f2a33;
+    font-size: 20px;
+    border-bottom: 2px solid #1f2a33;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    margin-top: 2rem;
+}
+
+.resume-container[data-template="template-1"] h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: #2d3748;
+}
+
+.resume-container[data-template="template-1"] h3+p {
+    font-style: italic;
+    color: #718096;
+    margin-bottom: 0.5rem;
+}
+
+.resume-container[data-template="template-1"] ul {
+    padding-left: 1.2rem;
+}
+
+.resume-container[data-template="template-1"] li {
+    margin-bottom: 0.5rem;
+}

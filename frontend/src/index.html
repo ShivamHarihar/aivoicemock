@@ -1,0 +1,469 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container hero-content">
+        <h1 class="fade-up">Master Your Interview <br> with <span class="text-gradient">AI Precision</span></h1>
+        <p class="fade-up hero-subtitle">
+            Experience the future of interview preparation. Real-time voice analysis, adaptive questioning, and
+            enterprise-grade feedback powered by SamproAI.
+        </p>
+
+        <div class="glass-panel fade-up hero-cta-card">
+            <div class="cta-content">
+                <h3>Start Your Journey</h3>
+                <p>Select a mode to begin your AI-powered interview.</p>
+            </div>
+            <div class="cta-actions">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">
+                    Start Interview <div class="btn-glow"></div>
+                </a>
+                <a href="{{ url_for('features') }}" class="btn btn-outline">Learn More</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Preview -->
+<section class="section">
+    <div class="container">
+        <h2 class="section-title fade-up">Why Choose Us?</h2>
+        <div class="features-grid">
+            <div class="feature-card fade-up">
+                <div class="feature-icon-wrapper">
+                    <svg class="feature-icon-svg brain-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="brainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <!-- Brain outline -->
+                        <path
+                            d="M50 20 C35 20 25 30 25 40 C25 45 27 50 30 53 C28 55 27 58 27 61 C27 67 32 72 38 72 C40 72 42 71 44 70 C46 75 51 78 56 78 C61 78 66 75 68 70 C70 71 72 72 74 72 C80 72 85 67 85 61 C85 58 84 55 82 53 C85 50 87 45 87 40 C87 30 77 20 62 20 C58 20 54 21 50 23 C48 21 54 20 50 20 Z"
+                            fill="url(#brainGrad)" opacity="0.2" />
+                        <!-- Neural connections -->
+                        <circle class="neuron" cx="40" cy="35" r="3" fill="#6366f1" />
+                        <circle class="neuron" cx="60" cy="35" r="3" fill="#6366f1" />
+                        <circle class="neuron" cx="35" cy="50" r="3" fill="#ec4899" />
+                        <circle class="neuron" cx="65" cy="50" r="3" fill="#ec4899" />
+                        <circle class="neuron" cx="50" cy="60" r="3" fill="#06b6d4" />
+                        <!-- Animated connections -->
+                        <line class="synapse" x1="40" y1="35" x2="60" y2="35" stroke="#6366f1" stroke-width="1"
+                            opacity="0.5" />
+                        <line class="synapse" x1="40" y1="35" x2="35" y2="50" stroke="#6366f1" stroke-width="1"
+                            opacity="0.5" />
+                        <line class="synapse" x1="60" y1="35" x2="65" y2="50" stroke="#ec4899" stroke-width="1"
+                            opacity="0.5" />
+                        <line class="synapse" x1="35" y1="50" x2="50" y2="60" stroke="#ec4899" stroke-width="1"
+                            opacity="0.5" />
+                        <line class="synapse" x1="65" y1="50" x2="50" y2="60" stroke="#06b6d4" stroke-width="1"
+                            opacity="0.5" />
+                    </svg>
+                </div>
+                <h3>Adaptive Intelligence</h3>
+                <p>Questions evolve based on your answers, simulating a real interviewer's curiosity.</p>
+            </div>
+
+            <div class="feature-card fade-up">
+                <div class="feature-icon-wrapper">
+                    <svg class="feature-icon-svg chart-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="chartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <!-- Chart bars -->
+                        <rect class="bar bar-1" x="15" y="60" width="15" height="25" fill="url(#chartGrad)" rx="2" />
+                        <rect class="bar bar-2" x="35" y="45" width="15" height="40" fill="url(#chartGrad)" rx="2" />
+                        <rect class="bar bar-3" x="55" y="30" width="15" height="55" fill="url(#chartGrad)" rx="2" />
+                        <rect class="bar bar-4" x="75" y="20" width="15" height="65" fill="url(#chartGrad)" rx="2" />
+                        <!-- Trend line -->
+                        <polyline class="trend-line" points="22,67 42,52 62,37 82,27" fill="none" stroke="#ec4899"
+                            stroke-width="2" stroke-dasharray="3,3" />
+                        <!-- Data points -->
+                        <circle class="data-point" cx="22" cy="67" r="3" fill="#ec4899" />
+                        <circle class="data-point" cx="42" cy="52" r="3" fill="#ec4899" />
+                        <circle class="data-point" cx="62" cy="37" r="3" fill="#ec4899" />
+                        <circle class="data-point" cx="82" cy="27" r="3" fill="#ec4899" />
+                    </svg>
+                </div>
+                <h3>Deep Analytics</h3>
+                <p>Get detailed scoring on technical depth, communication clarity, and confidence.</p>
+            </div>
+
+            <div class="feature-card fade-up">
+                <div class="feature-icon-wrapper">
+                    <svg class="feature-icon-svg lightning-icon" viewBox="0 0 100 100"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="lightningGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+                            </linearGradient>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur" />
+                                    <feMergeNode in="SourceGraphic" />
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <!-- Lightning bolt -->
+                        <path class="lightning-bolt" d="M55 15 L40 50 L50 50 L45 85 L70 45 L58 45 L65 15 Z"
+                            fill="url(#lightningGrad)" filter="url(#glow)" />
+                        <!-- Energy particles -->
+                        <circle class="energy-particle p1" cx="35" cy="30" r="2" fill="#fbbf24" opacity="0.8" />
+                        <circle class="energy-particle p2" cx="75" cy="35" r="2" fill="#fbbf24" opacity="0.8" />
+                        <circle class="energy-particle p3" cx="40" cy="65" r="2" fill="#f59e0b" opacity="0.8" />
+                        <circle class="energy-particle p4" cx="72" cy="60" r="2" fill="#f59e0b" opacity="0.8" />
+                    </svg>
+                </div>
+                <h3>Real-time Feedback</h3>
+                <p>Instant voice processing with micro-emotional reactions for a natural feel.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="section cta-section">
+    <div class="container">
+        <div class="cta-content-wrapper fade-up">
+            <h2 class="cta-heading">Ready to Land Your Dream Job?</h2>
+            <p class="cta-text">Join thousands of candidates who have mastered their interview skills.</p>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-cta">Start Practicing Now</a>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Feature Icon Animations */
+    .feature-icon-wrapper {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .feature-icon-svg {
+        width: 100%;
+        height: 100%;
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon-svg {
+        transform: scale(1.1);
+    }
+
+    /* Brain Icon Animations */
+    .neuron {
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    .neuron:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .neuron:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    .neuron:nth-child(4) {
+        animation-delay: 0.6s;
+    }
+
+    .neuron:nth-child(5) {
+        animation-delay: 0.8s;
+    }
+
+    .synapse {
+        animation: signal 3s ease-in-out infinite;
+    }
+
+    .synapse:nth-child(7) {
+        animation-delay: 0.3s;
+    }
+
+    .synapse:nth-child(8) {
+        animation-delay: 0.6s;
+    }
+
+    .synapse:nth-child(9) {
+        animation-delay: 0.9s;
+    }
+
+    .synapse:nth-child(10) {
+        animation-delay: 1.2s;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            r: 3;
+            opacity: 1;
+        }
+
+        50% {
+            r: 5;
+            opacity: 0.6;
+        }
+    }
+
+    @keyframes signal {
+
+        0%,
+        100% {
+            stroke-opacity: 0.3;
+            stroke-width: 1;
+        }
+
+        50% {
+            stroke-opacity: 1;
+            stroke-width: 2;
+        }
+    }
+
+    /* Chart Icon Animations */
+    .bar {
+        transform-origin: bottom;
+        animation: grow 2s ease-out infinite;
+    }
+
+    .bar-1 {
+        animation-delay: 0s;
+    }
+
+    .bar-2 {
+        animation-delay: 0.2s;
+    }
+
+    .bar-3 {
+        animation-delay: 0.4s;
+    }
+
+    .bar-4 {
+        animation-delay: 0.6s;
+    }
+
+    .trend-line {
+        stroke-dasharray: 200;
+        stroke-dashoffset: 200;
+        animation: draw 3s ease-in-out infinite;
+    }
+
+    .data-point {
+        animation: bounce 1.5s ease-in-out infinite;
+    }
+
+    .data-point:nth-child(9) {
+        animation-delay: 0s;
+    }
+
+    .data-point:nth-child(10) {
+        animation-delay: 0.2s;
+    }
+
+    .data-point:nth-child(11) {
+        animation-delay: 0.4s;
+    }
+
+    .data-point:nth-child(12) {
+        animation-delay: 0.6s;
+    }
+
+    @keyframes grow {
+
+        0%,
+        100% {
+            transform: scaleY(1);
+            opacity: 0.8;
+        }
+
+        50% {
+            transform: scaleY(1.15);
+            opacity: 1;
+        }
+    }
+
+    @keyframes draw {
+        0% {
+            stroke-dashoffset: 200;
+        }
+
+        50%,
+        100% {
+            stroke-dashoffset: 0;
+        }
+    }
+
+    @keyframes bounce {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-5px);
+        }
+    }
+
+    /* Lightning Icon Animations */
+    .lightning-bolt {
+        animation: flash 2s ease-in-out infinite;
+        transform-origin: center;
+    }
+
+    .energy-particle {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .p1 {
+        animation-delay: 0s;
+    }
+
+    .p2 {
+        animation-delay: 0.5s;
+    }
+
+    .p3 {
+        animation-delay: 1s;
+    }
+
+    .p4 {
+        animation-delay: 1.5s;
+    }
+
+    @keyframes flash {
+
+        0%,
+        100% {
+            opacity: 1;
+            filter: drop-shadow(0 0 5px #fbbf24);
+        }
+
+        50% {
+            opacity: 0.7;
+            filter: drop-shadow(0 0 15px #fbbf24);
+        }
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translate(0, 0);
+            opacity: 0;
+        }
+
+        25% {
+            opacity: 1;
+        }
+
+        50% {
+            transform: translate(10px, -20px);
+            opacity: 0.8;
+        }
+
+        75% {
+            opacity: 0.5;
+        }
+    }
+
+    /* Enhanced hover effects */
+    .feature-card {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    .feature-card:hover::before {
+        opacity: 1;
+        animation: rotate 10s linear infinite;
+    }
+
+    @keyframes rotate {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Clean CTA Section Styling */
+    .cta-section {
+        padding: 80px 0;
+        background: transparent;
+    }
+
+    .cta-content-wrapper {
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .cta-heading {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--text-main);
+        margin-bottom: 20px;
+        line-height: 1.2;
+    }
+
+    .cta-text {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        margin-bottom: 35px;
+        line-height: 1.6;
+    }
+
+    .btn-cta {
+        padding: 16px 40px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        box-shadow: 0 8px 24px rgba(30, 107, 123, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .btn-cta:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 32px rgba(30, 107, 123, 0.4);
+    }
+
+    @media (max-width: 768px) {
+        .cta-heading {
+            font-size: 2rem;
+        }
+
+        .cta-text {
+            font-size: 1rem;
+        }
+
+        .btn-cta {
+            padding: 14px 32px;
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,149 @@
+/* Template 8: Andrew O'Sullivan (Minimalist with Rule Accents) */
+/* Reference: Screenshot 2025-12-12 164239.png */
+
+@import url('../css/base_styles.css');
+
+body.template-13 {
+    font-family: 'Times New Roman', Times, serif;
+    color: #333;
+    background: #f4f4f4;
+    font-size: 12pt;
+    line-height: 1.5;
+}
+
+.resume-container[data-template="template-13"] {
+    display: block;
+    /* A4 Dimensions */
+    width: 210mm;
+    min-height: 297mm;
+    margin: 30px auto;
+    padding: 30px 45px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Header/Contact Info */
+.resume-container[data-template="template-13"] .resume-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.resume-container[data-template="template-13"] .resume-header h1 {
+    font-size: 28pt;
+    font-weight: 400;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+    color: #000;
+}
+
+.resume-container[data-template="template-13"] .section-contact {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 10pt;
+    color: #555;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.resume-container[data-template="template-13"] .section-contact div {
+    display: flex;
+    align-items: center;
+}
+
+.resume-container[data-template="template-13"] .section-contact i {
+    margin-right: 5px;
+    color: #000;
+}
+
+/* Section Styling */
+.resume-container[data-template="template-13"] .section-title {
+    font-size: 12pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-align: center;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    padding: 5px 0;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+}
+
+/* Profile Section */
+.resume-container[data-template="template-13"] .section-profile {
+    font-size: 11pt;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+/* Experience/Education Item Styling */
+.resume-container[data-template="template-13"] .item-container {
+    margin-bottom: 15px;
+    position: relative;
+    padding-right: 120px;
+}
+
+.resume-container[data-template="template-13"] h3 {
+    font-size: 13pt;
+    font-weight: bold;
+    margin: 0;
+    color: #000;
+}
+
+.resume-container[data-template="template-13"] .job-details,
+.resume-container[data-template="template-13"] .degree-details {
+    font-size: 11pt;
+    font-style: italic;
+    font-weight: 400;
+    margin: 0;
+    color: #555;
+}
+
+.resume-container[data-template="template-13"] .item-date {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 10pt;
+    font-weight: 400;
+    color: #555;
+}
+
+/* List Styling */
+.resume-container[data-template="template-13"] ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-top: 5px;
+    font-size: 11pt;
+}
+
+.resume-container[data-template="template-13"] li {
+    margin-bottom: 5px;
+}
+
+/* Skills, Languages, Awards - Simple list format */
+.resume-container[data-template="template-13"] .section-skills ul,
+.resume-container[data-template="template-13"] .section-languages ul {
+    list-style: none;
+    padding: 0;
+    column-count: 2;
+    /* Two columns for these sections */
+    font-size: 11pt;
+}
+
+.resume-container[data-template="template-13"] .section-awards .item-container {
+    margin-bottom: 10px;
+}
+
+.resume-container[data-template="template-13"] .section-awards h3 {
+    font-size: 11pt;
+    font-weight: bold;
+    margin: 0;
+    color: #000;
+}
+
+.resume-container[data-template="template-13"] .section-awards .award-details {
+    font-size: 10pt;
+    font-style: italic;
+    color: #555;
+}

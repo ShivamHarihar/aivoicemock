@@ -1,0 +1,81 @@
+/* Template 3: Single column with highlights */
+/* Reference: Screenshot 104544.png */
+
+@import url('../css/base_styles.css');
+
+body.template-3 {
+    font-family: 'Georgia', serif;
+    color: #333;
+    line-height: 1.6;
+}
+
+.resume-container[data-template="template-3"] {
+    /* A4 Dimensions */
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 3rem;
+    background: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Header */
+.resume-container[data-template="template-3"] .resume-header {
+    text-align: center;
+    border-bottom: 4px double #333;
+    padding-bottom: 2rem;
+    margin-bottom: 2rem;
+}
+
+.resume-container[data-template="template-3"] .resume-header h1 {
+    font-family: 'Arial', sans-serif;
+    font-size: 32px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 0.5rem;
+}
+
+/* Sections */
+.resume-container[data-template="template-3"] .resume-section {
+    margin-bottom: 2rem;
+}
+
+.resume-container[data-template="template-3"] h2 {
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    color: #555;
+}
+
+/* Highlights Grid (if applicable) */
+.resume-container[data-template="template-3"] .section-skills ul {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    list-style: none;
+    padding: 0;
+}
+
+.resume-container[data-template="template-3"] .section-skills li {
+    background: #f9f9f9;
+    padding: 0.5rem;
+    text-align: center;
+    border: 1px solid #eee;
+}
+
+/* Experience */
+.resume-container[data-template="template-3"] h3 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #000;
+}
+
+.resume-container[data-template="template-3"] h3+p {
+    color: #666;
+    font-style: italic;
+    margin-bottom: 0.5rem;
+}

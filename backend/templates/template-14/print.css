@@ -1,0 +1,37 @@
+@media print {
+    @page {
+        margin: 0;
+        size: A4;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-size: 10pt;
+    }
+
+    .resume-container {
+        display: block !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 45px;
+    }
+
+    /* Keep icons and color accents visible */
+    .section-title {
+        color: #483D8B !important;
+    }
+
+    .section-title i {
+        color: #6A5ACD !important;
+    }
+
+    .skill-tag {
+        border: 1px solid #6A5ACD !important;
+        background-color: #f0f0ff !important;
+    }
+
+    .no-break {
+        break-inside: avoid;
+    }
+}
